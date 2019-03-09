@@ -17,10 +17,18 @@ namespace GitHubWikiToPDF
         WebClient webClient= new WebClient();
 
         int m_numOpenLists = 0;
-        string OpenList()
+        int m_openListLevel = 0;
+        string OpenList(int level)
         {
-            //string openingTag;
-            if (m_numOpenLists > 0) return "";
+            if (level < m_openListLevel)
+            {
+                //close one list
+                m_numOpenLists--;
+                m_openListLevel = level;
+                return "</li>";
+            }
+            if (m_numOpenLists > 0 && level == m_openListLevel) return "";
+            m_openListLevel = level;
             m_numOpenLists++;
             return "<ul>";
 
@@ -32,10 +40,11 @@ namespace GitHubWikiToPDF
             closingTags = "";
             for (int i = 0; i < m_numOpenLists; i++) closingTags += "</ul>";
             m_numOpenLists = 0;
+            m_openListLevel = 0;
             return closingTags;
         }
 
-        string AsItemList(string line) { return OpenList() + "<li>" + line.Substring(2) + "</li>"; }
+        string AsItemList(string line, int level) { return OpenList(level) + "<li>" + line.Substring(2) + "</li>"; }
         string AsParagraph(string line) { return "<p>" + line + "</p>"; }
 
         void DownloadImage(string url, string localFile)
@@ -115,8 +124,10 @@ namespace GitHubWikiToPDF
             if (line.StartsWith("## ")) return CloseAllOpenLists() + "<h3>" + line.Substring(3) + "</h3>";
             if (line.StartsWith("### ")) return CloseAllOpenLists() + "<h4>" + line.Substring(4) + "</h4>";
             if (line.StartsWith("#### ")) return CloseAllOpenLists() + "<h5>" + line.Substring(5) + "</h5>";
+            if (line.StartsWith("> ")) return "<i>" + line.Substring(2) + "</i>";
             return line;
         }
+
  
         string SubstitutePattern(string line, string regExpr, string outPrefix, string outPostfix)
         {
@@ -143,6 +154,14 @@ namespace GitHubWikiToPDF
             docName = Regex.Replace(result, @"(\s(of|in|by|and|the)|\'[st])\b", m => m.Value.ToLower(), RegexOptions.IgnoreCase);
 
             return docName;
+        }
+
+        int CountSpacesAtBeginning(string line)
+        {
+            int i = 0;
+            while (i<line.Length && line[i] == ' ')
+                i++;
+            return i;
         }
 
         public string Convert(string folder, string markdownDocFilename)
@@ -180,12 +199,14 @@ namespace GitHubWikiToPDF
 
             foreach (string line in lines)
             {
+                int numIndents = 0;
+                numIndents = CountSpacesAtBeginning(line);
                 string parsedLine = line.Trim(' ');
 
                 parsedLine = ConvertTitles(parsedLine);
 
-                if (parsedLine.StartsWith("* ")) parsedLine = AsItemList(parsedLine);
-                else if (parsedLine.StartsWith("- ")) parsedLine = AsItemList(parsedLine);
+                if (parsedLine.StartsWith("* ")) parsedLine = AsItemList(parsedLine, numIndents);
+                else if (parsedLine.StartsWith("- ")) parsedLine = AsItemList(parsedLine, numIndents);
                 else parsedLine = AsParagraph(parsedLine);
                 //parse images, ALWAYS BEFORE REGULAR LINKS
                 parsedLine = ParseImages(parsedLine, @"!\[([^\]]+)\]\(([^\)]+)\)", folder);
