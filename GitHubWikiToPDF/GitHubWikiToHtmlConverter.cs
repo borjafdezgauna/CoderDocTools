@@ -38,11 +38,25 @@ namespace GitHubWikiToPDF
         string AsItemList(string line) { return OpenList() + "<li>" + line.Substring(2) + "</li>"; }
         string AsParagraph(string line) { return "<p>" + line + "</p>"; }
 
-        void DownloadImage(string url, string folder)
+        void DownloadImage(string url, string localFile)
         {
-            Console.WriteLine("INFO. Downloading image: " + url + " to output folder " + folder);
-            webClient.DownloadFile(url, folder + Path.GetFileName(url));
+            string outputFolder = Path.GetDirectoryName(localFile);
+            if (!Directory.Exists(outputFolder))
+                Directory.CreateDirectory(outputFolder);
+            webClient.DownloadFile(url, localFile);
         }
+        string FromUrlToLocalFile(string url, string localFolder)
+        {
+            string localFile = localFolder;
+            if (!localFile.EndsWith("\\") && !localFile.EndsWith("/"))
+                localFile += "/";
+            return localFile + "img/" + Path.GetFileName(url);
+        }
+        string FromUrlToLocalFileRelativeToHtml(string url)
+        {
+            return "img/" + Path.GetFileName(url);
+        }
+
         string ParseImages(string line, string regExpr, string folder)
         {
             Match match = Regex.Match(line, regExpr);
@@ -50,13 +64,13 @@ namespace GitHubWikiToPDF
             {
                 string text = match.Groups[1].Value;
                 string url = match.Groups[2].Value;
-
+                string localFile = FromUrlToLocalFile(url, folder);
                 if (!DownloadedImages.Contains(url))
                 {
-                    DownloadImage(url, folder);
+                    DownloadImage(url, localFile);
                     DownloadedImages.Add(url);
                 }
-                string htmlLink = "<img src=\"" + url + "\" alt=\"" + text + "\">";
+                string htmlLink = "<img src=\"" + FromUrlToLocalFileRelativeToHtml(url) + "\" alt=\"" + text + "\">";
                 line = line.Substring(0, match.Index) + htmlLink + line.Substring(match.Index + match.Length);
 
                 match = Regex.Match(line, regExpr);
@@ -75,7 +89,11 @@ namespace GitHubWikiToPDF
             while (match.Success)
             {
                 string text = match.Groups[1].Value;
-                string wikiLink = WikifyLink(match.Groups[2].Value);
+                string wikiLink;
+
+                if (match.Groups.Count > 2)
+                    wikiLink = WikifyLink(match.Groups[2].Value);
+                else wikiLink = WikifyLink(text);
 
                 string htmlLinkRef= wikiLink + ".html";
                 
@@ -109,7 +127,7 @@ namespace GitHubWikiToPDF
                 string text = match.Groups[1].Value;
 
                 if (match.Groups.Count > 2) // if the pattern includes a character after the main one, we add it to the output. See the pattern used for italics
-                    line = line.Substring(0, match.Index) + outPrefix + text + outPostfix + match.Groups[2].Value + line.Substring(match.Index + match.Length - 1);
+                    line = line.Substring(0, match.Index) + outPrefix + text + outPostfix + match.Groups[2].Value + line.Substring(match.Index + match.Length);
                 else line = line.Substring(0, match.Index) + outPrefix + text + outPostfix + line.Substring(match.Index + match.Length);
 
                 match = Regex.Match(line, regExpr);
@@ -174,6 +192,7 @@ namespace GitHubWikiToPDF
                 //parse links
                 parsedLine = ParseLinks(parsedLine, @"\[\[([^\]]+)\|([^\]]+)\]\]"); //[[text|url]]
                 parsedLine = ParseLinks(parsedLine, @"\[([^\]]+)\]\(([^\)]+)\)"); //[text](url)
+                parsedLine = ParseLinks(parsedLine, @"\[\[([^\]]+)\]\]"); //[[url]]
                 //parse bolds
                 parsedLine = SubstitutePattern(parsedLine, @"\*\*([^\*]+)\*\*", "<b>", "</b>");
                 parsedLine = SubstitutePattern(parsedLine, @"\*([^\*]+)\*", "<b>", "</b>");
