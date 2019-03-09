@@ -36,17 +36,20 @@ namespace GitHubWikiToPDF
                 return;
             }
 
+            if (!Directory.Exists(projectName))
+                Directory.CreateDirectory(projectName);
+
             Console.WriteLine("\n#### 1. Downloading the last version of the wiki");
 
             GitHubWikiDownloader downloader = new GitHubWikiDownloader();
-            downloader.CloneWikiGitRepo(userName + "/" + projectName, "temp");
+            downloader.CloneWikiGitRepo(userName + "/" + projectName, projectName);
 
             Console.WriteLine("\n#### 2. Converting the wiki to a single Html file");
             GitHubWikiToHtmlConverter markDownWikiToHtmlConverter = new GitHubWikiToHtmlConverter();
-            string htmlMergedDocFilename = "temp/" + projectName + ".html";
+            string htmlMergedDocFilename = projectName + "/" + projectName + ".html";
             using (StreamWriter htmlWriter = File.CreateText(htmlMergedDocFilename))
             {
-                markDownWikiToHtmlConverter.Convert(htmlWriter, "temp", "Home.md", "style.css");
+                markDownWikiToHtmlConverter.Convert(htmlWriter, projectName, "Home.md", "style.css");
             }
 
             Console.WriteLine("\n#### 3. Generating the PDF file from the merged Html file");
