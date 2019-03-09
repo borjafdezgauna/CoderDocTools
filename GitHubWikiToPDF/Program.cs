@@ -14,6 +14,8 @@ namespace GitHubWikiToPDF
         static string userName = null;
         const string projectNameArg = "-project=";
         static string projectName = null;
+        const string cssArg = "-css=";
+        static string cssFile = null;
 
         static bool ParseArguments(string [] args)
         {
@@ -21,6 +23,7 @@ namespace GitHubWikiToPDF
             {
                 if (arg.StartsWith(projectNameArg)) projectName = arg.Substring(projectNameArg.Length);
                 if (arg.StartsWith(userNameArg)) userName = arg.Substring(userNameArg.Length);
+                if (arg.StartsWith(cssArg)) cssFile = arg.Substring(cssArg.Length);
             }
             if (projectName != null && userName != null) return true;
             return false; //error parsing arguments
@@ -43,12 +46,12 @@ namespace GitHubWikiToPDF
             string htmlMergedDocFilename = "temp/" + projectName + ".html";
             using (StreamWriter htmlWriter = File.CreateText(htmlMergedDocFilename))
             {
-                markDownWikiToHtmlConverter.Convert(htmlWriter, "temp", "Home.md");
+                markDownWikiToHtmlConverter.Convert(htmlWriter, "temp", "Home.md", "style.css");
             }
 
             Console.WriteLine("\n#### 3. Generating the PDF file from the merged Html file");
 
-            var exporter= new IronPdf.HtmlToPdf();
+            var exporter= new HtmlToPdf();
             var pdf= exporter.RenderHTMLFileAsPdf(htmlMergedDocFilename);
             pdf.SaveAs(projectName + ".pdf");
         }

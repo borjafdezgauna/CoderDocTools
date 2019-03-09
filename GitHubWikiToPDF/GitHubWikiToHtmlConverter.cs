@@ -199,7 +199,7 @@ namespace GitHubWikiToPDF
             return i;
         }
 
-        public void Convert(StreamWriter htmlWriter, string folder, string markdownDocFilename, bool isRootDocument= true)
+        public void Convert(StreamWriter htmlWriter, string folder, string markdownDocFilename, string cssFile = null, bool isRootDocument= true)
         {
             //we ignore external references
             List<string> ignoredPrefixes = new List<string>(){ "http://", "https://", "./", "../"};
@@ -259,7 +259,15 @@ namespace GitHubWikiToPDF
 
             string title = DocNameFromFilename(localFilename);
             if (isRootDocument)
-                htmlWriter.WriteLine("<html><header><title>" + title + "</title></header><body>");
+            {
+                htmlWriter.Write("<html><header><title>" + title + "</title>");
+                if (cssFile != null)
+                {
+                    File.Copy(cssFile, folder + "\\" + cssFile, true);
+                    htmlWriter.Write("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + Path.GetFileName(cssFile) + "\">");
+                }
+                htmlWriter.WriteLine("</header><body>");
+            }
             
             htmlWriter.WriteLine(AsTitle(1, title));
             foreach (string line in parsedLines)
@@ -273,7 +281,7 @@ namespace GitHubWikiToPDF
                 LinkedPages.RemoveAt(0);
 
                 if (!ConvertedPages.Contains(linkedPage))
-                    Convert(htmlWriter, folder, linkedPage, false);
+                    Convert(htmlWriter, folder, linkedPage, null, false);
             }
 
             if (isRootDocument)
