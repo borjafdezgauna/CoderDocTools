@@ -36,7 +36,9 @@ namespace GitHubWikiToPDF
             }
             startInfo.UseShellExecute = false;
             startInfo.RedirectStandardOutput = true;
-            
+
+            Console.WriteLine(startInfo.FileName + " " + startInfo.Arguments + " " + wikiHomeUrl);
+
             Process process = new Process();
             process.StartInfo = startInfo;
             process.Start();

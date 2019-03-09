@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IronPdf;
 
 namespace GitHubWikiToPDF
 {
@@ -32,14 +33,24 @@ namespace GitHubWikiToPDF
                 return;
             }
 
+            Console.WriteLine("\n#### 1. Downloading the last version of the wiki");
+
             GitHubWikiDownloader downloader = new GitHubWikiDownloader();
             downloader.CloneWikiGitRepo(userName + "/" + projectName, "temp");
 
-            GitHubWikiToHtmlConverter converter = new GitHubWikiToHtmlConverter();
-            using (StreamWriter htmlWriter = File.CreateText("temp/" + projectName + ".html"))
+            Console.WriteLine("\n#### 2. Converting the wiki to a single Html file");
+            GitHubWikiToHtmlConverter markDownWikiToHtmlConverter = new GitHubWikiToHtmlConverter();
+            string htmlMergedDocFilename = "temp/" + projectName + ".html";
+            using (StreamWriter htmlWriter = File.CreateText(htmlMergedDocFilename))
             {
-                converter.Convert(htmlWriter, "temp", "Home.md");
+                markDownWikiToHtmlConverter.Convert(htmlWriter, "temp", "Home.md");
             }
+
+            Console.WriteLine("\n#### 3. Generating the PDF file from the merged Html file");
+
+            var exporter= new IronPdf.HtmlToPdf();
+            var pdf= exporter.RenderHTMLFileAsPdf(htmlMergedDocFilename);
+            pdf.SaveAs(projectName + ".pdf");
         }
     }
 }
