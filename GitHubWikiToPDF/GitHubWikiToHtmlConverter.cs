@@ -90,7 +90,7 @@ namespace GitHubWikiToPDF
 
         string WikifyLink(string url)
         {
-            return url.Replace(' ', '-');
+            return url.ToLower().Replace(' ', '-');
         }
 
         string ParseLinks(string line, string regExpr)
@@ -102,29 +102,60 @@ namespace GitHubWikiToPDF
                 string wikiLink;
 
                 if (match.Groups.Count > 2)
-                    wikiLink = WikifyLink(match.Groups[2].Value);
-                else wikiLink = WikifyLink(text);
+                    wikiLink = match.Groups[2].Value;
+                else wikiLink = text;
 
-                string htmlLinkRef= wikiLink + ".html";
-                
-                //Add to the list of linked pages
-                LinkedPages.Add(wikiLink + ".md");
+                if (!wikiLink.StartsWith("http"))
+                {
+                    wikiLink = WikifyLink(wikiLink);
+                    //Add to the list of linked pages
+                    LinkedPages.Add(wikiLink + ".md");
+                }
 
-                string htmlLink= "<a href=\"" + htmlLinkRef + "\">" + text + "</a>";
+                //We are merging all source documents to a single one, so links within the wiki need to be converted to anchors
+                string htmlLink= "<a href=\"#" + wikiLink + "\">" + text + "</a>";
                 line = line.Substring(0, match.Index) + htmlLink + line.Substring(match.Index + match.Length);
 
                 match = Regex.Match(line, regExpr);
             }
             return line;
         }
+        string AsTitle(int level, string text)
+        {
+            return "<h" + level + "><a name=\"" + WikifyLink(text) + "\">" + text + "</a></h" + level + ">";
+        }
+        string Dehtmlfy(string line)
+        {
+            string output = "";
+            foreach (char c in line.ToCharArray())
+            {
+                if (c == '<') output += "&lt;";
+                else if (c == '>') output += "&gt;";
+                else output += c;
+            }
+            return output;
+        }
 
+        bool IsCodeBlockOpen = false;
         string ConvertLinePrefixes(string line, int numIndents)
         {
+            if (line.StartsWith("```"))
+            {
+                if (!IsCodeBlockOpen)
+                {
+                    IsCodeBlockOpen = true;
+                    return "<pre><code>";
+                }
+                IsCodeBlockOpen = false;
+                return "</code></pre>";
+            }
+            else if (IsCodeBlockOpen)
+                return Dehtmlfy(line);
             //<h1> is reserved for the title of the document
-            if (line.StartsWith("# ")) return CloseAllOpenLists() + "<h2>" + line.Substring(2) + "</h2>";
-            if (line.StartsWith("## ")) return CloseAllOpenLists() + "<h3>" + line.Substring(3) + "</h3>";
-            if (line.StartsWith("### ")) return CloseAllOpenLists() + "<h4>" + line.Substring(4) + "</h4>";
-            if (line.StartsWith("#### ")) return CloseAllOpenLists() + "<h5>" + line.Substring(5) + "</h5>";
+            if (line.StartsWith("# ")) return CloseAllOpenLists() + AsTitle(2, line.Substring(2));
+            if (line.StartsWith("## ")) return CloseAllOpenLists() + AsTitle(3, line.Substring(3));
+            if (line.StartsWith("### ")) return CloseAllOpenLists() + AsTitle(4, line.Substring(4));
+            if (line.StartsWith("#### ")) return CloseAllOpenLists() + AsTitle(5, line.Substring(5));
             if (line.StartsWith("> ")) return "<i>" + line.Substring(2) + "</i>";
             if (line.StartsWith("* ")) return AsItemList(line, numIndents);
             if (line.StartsWith("- ")) return AsItemList(line, numIndents);
@@ -230,7 +261,7 @@ namespace GitHubWikiToPDF
             if (isRootDocument)
                 htmlWriter.WriteLine("<html><header><title>" + title + "</title></header><body>");
             
-            htmlWriter.WriteLine("<h1>" + title + "</h1>");
+            htmlWriter.WriteLine(AsTitle(1, title));
             foreach (string line in parsedLines)
                 htmlWriter.WriteLine(line);
            
