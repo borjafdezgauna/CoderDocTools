@@ -25,7 +25,7 @@ namespace GitHubWikiToPDF
                 //close one list
                 m_numOpenLists--;
                 m_openListLevel = level;
-                return "</li>";
+                return "</ul>";
             }
             if (m_numOpenLists > 0 && level == m_openListLevel) return "";
             m_openListLevel = level;
@@ -38,7 +38,8 @@ namespace GitHubWikiToPDF
             string closingTags;
             if (m_numOpenLists == 0) return "";
             closingTags = "";
-            for (int i = 0; i < m_numOpenLists; i++) closingTags += "</ul>";
+            for (int i = 0; i < m_numOpenLists; i++)
+                closingTags += "</ul>";
             m_numOpenLists = 0;
             m_openListLevel = 0;
             return closingTags;
@@ -117,7 +118,7 @@ namespace GitHubWikiToPDF
             return line;
         }
 
-        string ConvertTitles(string line)
+        string ConvertLinePrefixes(string line, int numIndents)
         {
             //<h1> is reserved for the title of the document
             if (line.StartsWith("# ")) return CloseAllOpenLists() + "<h2>" + line.Substring(2) + "</h2>";
@@ -125,7 +126,10 @@ namespace GitHubWikiToPDF
             if (line.StartsWith("### ")) return CloseAllOpenLists() + "<h4>" + line.Substring(4) + "</h4>";
             if (line.StartsWith("#### ")) return CloseAllOpenLists() + "<h5>" + line.Substring(5) + "</h5>";
             if (line.StartsWith("> ")) return "<i>" + line.Substring(2) + "</i>";
-            return line;
+            if (line.StartsWith("* ")) return AsItemList(line, numIndents);
+            if (line.StartsWith("- ")) return AsItemList(line, numIndents);
+            return AsParagraph(line);
+            
         }
 
  
@@ -164,35 +168,33 @@ namespace GitHubWikiToPDF
             return i;
         }
 
-        public string Convert(string folder, string markdownDocFilename)
+        public void Convert(StreamWriter htmlWriter, string folder, string markdownDocFilename, bool isRootDocument= true)
         {
             //we ignore external references
             List<string> ignoredPrefixes = new List<string>(){ "http://", "https://", "./", "../"};
             foreach (string ignoredPrefix in ignoredPrefixes)
             {
                 if (markdownDocFilename.StartsWith(ignoredPrefix))
-                    return null;
+                    return;
             }
             //we ignore references to anchors
             if (markdownDocFilename.Contains("#"))
-                return null;
+                return;
 
             string localFilename = folder + "\\" + markdownDocFilename;
 
             if (!File.Exists(localFilename))
             {
                 Console.WriteLine("Warning: Invalid reference to " + markdownDocFilename + " found");
-                return null;
+                return;
             }
-
-            string htmlDocFilename = markdownDocFilename.Substring(0, markdownDocFilename.Length - 3) + ".html";
 
             string[] lines = File.ReadAllLines(localFilename);
 
             if (lines == null)
             {
                 Console.WriteLine("ERROR. Couldn't find referenced page: " + markdownDocFilename);
-                return null;
+                return;
             }
 
             List<string> parsedLines = new List<string>();
@@ -203,11 +205,8 @@ namespace GitHubWikiToPDF
                 numIndents = CountSpacesAtBeginning(line);
                 string parsedLine = line.Trim(' ');
 
-                parsedLine = ConvertTitles(parsedLine);
+                parsedLine = ConvertLinePrefixes(parsedLine, numIndents);
 
-                if (parsedLine.StartsWith("* ")) parsedLine = AsItemList(parsedLine, numIndents);
-                else if (parsedLine.StartsWith("- ")) parsedLine = AsItemList(parsedLine, numIndents);
-                else parsedLine = AsParagraph(parsedLine);
                 //parse images, ALWAYS BEFORE REGULAR LINKS
                 parsedLine = ParseImages(parsedLine, @"!\[([^\]]+)\]\(([^\)]+)\)", folder);
                 //parse links
@@ -225,15 +224,16 @@ namespace GitHubWikiToPDF
                 parsedLines.Add(parsedLine);
             }
 
-            using (StreamWriter writer = File.CreateText(folder + "\\" + htmlDocFilename))
-            {
-                string title = DocNameFromFilename(htmlDocFilename);
-                writer.WriteLine("<html><header><title>" + title + "</title></header><body>");
-                writer.WriteLine("<h1>" + title + "</h1>");
-                foreach (string line in parsedLines)
-                    writer.WriteLine(line);
-                writer.WriteLine("</body></html>");
-            }
+            parsedLines.Add(CloseAllOpenLists()); //In case there is some un-closed list
+
+            string title = DocNameFromFilename(localFilename);
+            if (isRootDocument)
+                htmlWriter.WriteLine("<html><header><title>" + title + "</title></header><body>");
+            
+            htmlWriter.WriteLine("<h1>" + title + "</h1>");
+            foreach (string line in parsedLines)
+                htmlWriter.WriteLine(line);
+           
 
             ConvertedPages.Add(markdownDocFilename);
             while (LinkedPages.Count > 0)
@@ -242,10 +242,11 @@ namespace GitHubWikiToPDF
                 LinkedPages.RemoveAt(0);
 
                 if (!ConvertedPages.Contains(linkedPage))
-                    Convert(folder, linkedPage);
+                    Convert(htmlWriter, folder, linkedPage, false);
             }
 
-            return htmlDocFilename;
+            if (isRootDocument)
+                htmlWriter.WriteLine("</body></html>");
         }
     }
 }
