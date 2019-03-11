@@ -271,7 +271,7 @@ namespace GitHubWikiToPDF
             if (isRootDocument)
             {
                 htmlWriter.Write("<html><header><title>" + title + "</title>");
-                if (cssFile != null)
+                if (cssFile != null && File.Exists(cssFile))
                 {
                     File.Copy(cssFile, outputHtmlFolder + "\\" + Path.GetFileName(cssFile), true);
                     htmlWriter.Write("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + Path.GetFileName(cssFile) + "\">");
