@@ -14,8 +14,18 @@ namespace GitHubWikiToPDF
         static string userName = null;
         const string projectNameArg = "-project=";
         static string projectName = null;
+        const string inputFileArg = "-input-file=";
+        static string inputFile= null;
+        const string outputFileArg = "-output-file=";
+        static string outputFile = null;
         const string cssArg = "-css=";
         static string cssFile = null;
+        static string tempFolder;
+        static string mergedHtmlFilename;
+        static string markDownInputFolder;
+
+        enum ExecutionMode { Undefined, GitHubWikiToPDF, LocalMarkdownFileToPDF};
+        static ExecutionMode executionMode= ExecutionMode.Undefined;
 
         static bool ParseArguments(string [] args)
         {
@@ -24,39 +34,73 @@ namespace GitHubWikiToPDF
                 if (arg.StartsWith(projectNameArg)) projectName = arg.Substring(projectNameArg.Length);
                 if (arg.StartsWith(userNameArg)) userName = arg.Substring(userNameArg.Length);
                 if (arg.StartsWith(cssArg)) cssFile = arg.Substring(cssArg.Length);
+                if (arg.StartsWith(inputFileArg)) inputFile = arg.Substring(inputFileArg.Length);
+                if (arg.StartsWith(outputFileArg)) outputFile = arg.Substring(outputFileArg.Length);
             }
-            if (projectName != null && userName != null) return true;
+
+            if (projectName != null && userName != null && outputFile != null)
+            {
+                tempFolder = projectName;
+                markDownInputFolder = tempFolder;
+                mergedHtmlFilename = tempFolder + "/" + projectName + ".html";
+                inputFile = "Home.md";
+                executionMode = ExecutionMode.GitHubWikiToPDF;
+                return true; //GitHub wiki -> PDF mode
+            }
+            if (inputFile != null && outputFile != null)
+            {
+                tempFolder = "tmp";
+                string inputDocName = Path.GetFileNameWithoutExtension(inputFile);
+                markDownInputFolder = Path.GetDirectoryName(inputFile);
+                inputFile = Path.GetFileName(inputFile) ;
+                mergedHtmlFilename = tempFolder + "/" + inputDocName + ".html";
+                executionMode = ExecutionMode.LocalMarkdownFileToPDF;
+                return true; //Local Markdown file -> PDF mode
+            }
             return false; //error parsing arguments
         }
         static void Main(string[] args)
         {
             if (!ParseArguments(args))
             {
-                Console.WriteLine("ERROR. Incorrect arguments.\nUsage: GitHubWikiToPDF -user=<github-user> -project=<github-project>\nFor example: GitHubWikiToPDF -user=simionsoft -project=SimionZoo");
+                Console.WriteLine("ERROR. Incorrect arguments.");
+                Console.WriteLine("Usage: GitHubWikiToPDF [-user=<github-user> -project=<github-project> | -input-file=<input-file (.md)]> -css=<css-file> -output-file=<output-file (.pdf)>");
+                Console.WriteLine("Use examples:");
+                Console.WriteLine("\ta) Download and convert a GitHub wiki: GitHubWikiToPDF -user=simionsoft -project=SimionZoo -output-file=SimionZoo.pdf -css=style.css");
+                Console.WriteLine("\tb) Convert a local markdown file: GitHubWikiToPDF -input-file=../myLocalFile.md -output-file=myLocalFile.pdf -css=style.css");
                 return;
             }
 
-            if (!Directory.Exists(projectName))
-                Directory.CreateDirectory(projectName);
+            if (!Directory.Exists(tempFolder))
+                Directory.CreateDirectory(tempFolder);
 
+            //Download the last version of the wiki
             Console.WriteLine("\n#### 1. Downloading the last version of the wiki");
-
-            GitHubWikiDownloader downloader = new GitHubWikiDownloader();
-            downloader.CloneWikiGitRepo(userName + "/" + projectName, projectName);
-
-            Console.WriteLine("\n#### 2. Converting the wiki to a single Html file");
-            GitHubWikiToHtmlConverter markDownWikiToHtmlConverter = new GitHubWikiToHtmlConverter();
-            string htmlMergedDocFilename = projectName + "/" + projectName + ".html";
-            using (StreamWriter htmlWriter = File.CreateText(htmlMergedDocFilename))
+            if (executionMode == ExecutionMode.GitHubWikiToPDF)
             {
-                markDownWikiToHtmlConverter.Convert(htmlWriter, projectName, "Home.md", "style.css");
+                GitHubWikiDownloader downloader = new GitHubWikiDownloader();
+                downloader.CloneWikiGitRepo(userName + "/" + projectName, tempFolder);
+            }
+            else
+            {
+                Console.WriteLine("Skipped");
             }
 
-            Console.WriteLine("\n#### 3. Generating the PDF file from the merged Html file");
+            //Convert it to html
+            Console.WriteLine("\n#### 2. Converting markdown files to a single .html file");
+            GitHubWikiToHtmlConverter markDownWikiToHtmlConverter = new GitHubWikiToHtmlConverter();
 
-            var exporter= new HtmlToPdf();
-            var pdf= exporter.RenderHTMLFileAsPdf(htmlMergedDocFilename);
-            pdf.SaveAs(projectName + ".pdf");
+            using (StreamWriter htmlWriter = File.CreateText(mergedHtmlFilename))
+            {
+                markDownWikiToHtmlConverter.Convert(htmlWriter, markDownInputFolder, inputFile, tempFolder, cssFile);
+            }
+
+            //Convert the html file to pdf
+            Console.WriteLine("\n#### 3. Generating the PDF file from the merged Html file");
+            HtmlToPdf exporter= new HtmlToPdf();
+            PdfDocument pdf= exporter.RenderHTMLFileAsPdf(mergedHtmlFilename);
+            if (!outputFile.EndsWith(".pdf")) outputFile += ".pdf";
+            pdf.SaveAs(outputFile);
         }
     }
 }

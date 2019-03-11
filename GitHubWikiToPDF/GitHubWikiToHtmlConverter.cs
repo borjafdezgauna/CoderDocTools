@@ -92,6 +92,13 @@ namespace GitHubWikiToPDF
         {
             return url.ToLower().Replace(' ', '-');
         }
+        string LinkToAnchorName(string url)
+        {
+            int lastSlash = Math.Max(url.LastIndexOf('/'), url.LastIndexOf('\\'));
+            if (lastSlash >= 0)
+                return url.Substring(lastSlash + 1);
+            return url;
+        }
 
         string ParseLinks(string line, string regExpr)
         {
@@ -113,7 +120,7 @@ namespace GitHubWikiToPDF
                 }
 
                 //We are merging all source documents to a single one, so links within the wiki need to be converted to anchors
-                string htmlLink= "<a href=\"#" + wikiLink + "\">" + text + "</a>";
+                string htmlLink= "<a href=\"#" + LinkToAnchorName(wikiLink) + "\">" + text + "</a>";
                 line = line.Substring(0, match.Index) + htmlLink + line.Substring(match.Index + match.Length);
 
                 match = Regex.Match(line, regExpr);
@@ -122,7 +129,10 @@ namespace GitHubWikiToPDF
         }
         string AsTitle(int level, string text)
         {
-            return "<h" + level + "><a name=\"" + WikifyLink(text) + "\">" + text + "</a></h" + level + ">";
+            if (level <= 2)
+                return "<h" + level + "><a name=\"" + LinkToAnchorName(WikifyLink(text)) + "\">" + text + "</a></h" + level + ">";
+            else
+                return "<h" + level + ">" + text + "</h" + level + ">";
         }
         string Dehtmlfy(string line)
         {
@@ -199,10 +209,10 @@ namespace GitHubWikiToPDF
             return i;
         }
 
-        public void Convert(StreamWriter htmlWriter, string folder, string markdownDocFilename, string cssFile = null, bool isRootDocument= true)
+        public void Convert(StreamWriter htmlWriter, string inputMarkdownFolder, string markdownDocFilename, string outputHtmlFolder, string cssFile = null, bool isRootDocument= true)
         {
             //we ignore external references
-            List<string> ignoredPrefixes = new List<string>(){ "http://", "https://", "./", "../"};
+            List<string> ignoredPrefixes = new List<string>(){ "http://", "https://" };
             foreach (string ignoredPrefix in ignoredPrefixes)
             {
                 if (markdownDocFilename.StartsWith(ignoredPrefix))
@@ -212,7 +222,7 @@ namespace GitHubWikiToPDF
             if (markdownDocFilename.Contains("#"))
                 return;
 
-            string localFilename = folder + "\\" + markdownDocFilename;
+            string localFilename = inputMarkdownFolder + "\\" + markdownDocFilename;
 
             if (!File.Exists(localFilename))
             {
@@ -239,7 +249,7 @@ namespace GitHubWikiToPDF
                 parsedLine = ConvertLinePrefixes(parsedLine, numIndents);
 
                 //parse images, ALWAYS BEFORE REGULAR LINKS
-                parsedLine = ParseImages(parsedLine, @"!\[([^\]]+)\]\(([^\)]+)\)", folder);
+                parsedLine = ParseImages(parsedLine, @"!\[([^\]]+)\]\(([^\)]+)\)", inputMarkdownFolder);
                 //parse links
                 parsedLine = ParseLinks(parsedLine, @"\[\[([^\]]+)\|([^\]]+)\]\]"); //[[text|url]]
                 parsedLine = ParseLinks(parsedLine, @"\[([^\]]+)\]\(([^\)]+)\)"); //[text](url)
@@ -263,7 +273,7 @@ namespace GitHubWikiToPDF
                 htmlWriter.Write("<html><header><title>" + title + "</title>");
                 if (cssFile != null)
                 {
-                    File.Copy(cssFile, folder + "\\" + cssFile, true);
+                    File.Copy(cssFile, outputHtmlFolder + "\\" + Path.GetFileName(cssFile), true);
                     htmlWriter.Write("<link rel=\"stylesheet\" type=\"text/css\" href=\"" + Path.GetFileName(cssFile) + "\">");
                 }
                 htmlWriter.WriteLine("</header><body>");
@@ -281,7 +291,7 @@ namespace GitHubWikiToPDF
                 LinkedPages.RemoveAt(0);
 
                 if (!ConvertedPages.Contains(linkedPage))
-                    Convert(htmlWriter, folder, linkedPage, null, false);
+                    Convert(htmlWriter, inputMarkdownFolder, linkedPage, outputHtmlFolder, null, false);
             }
 
             if (isRootDocument)
