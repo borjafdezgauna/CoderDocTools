@@ -4,7 +4,17 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using IronPdf;
+using PdfSharp;
+using PdfSharp.Drawing;
+//using ExpertPdf.HtmlToPdf.PdfDocument;
+//using OpenHtmlToPdf;
+//using PdfSharp.Pdf;
+//using IronPdf;
+//using TheArtOfDev.HtmlRenderer.PdfSharp;
+//using iTextSharp;
+//using iTextSharp.text;
+//using iTextSharp.text;
+using PdfSharp.Pdf;
 
 namespace GitHubWikiToPDF
 {
@@ -97,10 +107,48 @@ namespace GitHubWikiToPDF
 
             //Convert the html file to pdf
             Console.WriteLine("\n#### 3. Generating the PDF file from the merged Html file");
-            HtmlToPdf exporter= new HtmlToPdf();
-            PdfDocument pdf= exporter.RenderHTMLFileAsPdf(mergedHtmlFilename);
+            string htmlFileAsString = File.ReadAllText(mergedHtmlFilename);
             if (!outputFile.EndsWith(".pdf")) outputFile += ".pdf";
-            pdf.SaveAs(outputFile);
+
+            PdfSharp.Pdf.PdfDocument document = new PdfDocument();
+            PdfSharp.Pdf.PdfPage page = document.AddPage();
+            PageSize size= page.Size;
+
+            // Create a font
+            XFont font = new XFont("Times", 12, XFontStyle.Bold);
+
+            XGraphics gfx = XGraphics.FromPdfPage(page);
+
+            XRect rect = new XRect(0, 0, page.Width, page.Height);
+            gfx.DrawString("trying PdfSharp", font, XBrushes.DarkRed, rect, XStringFormats.TopLeft);
+            gfx.DrawString("trying PdfSharp to see if i can generate the pdf automatically", font, XBrushes.DarkBlue, rect, XStringFormats.BottomLeft);
+            document.Save(outputFile);
+            //using (FileStream writer = File.Create(outputFile))
+            //{
+            //    iTextSharp.text.Document document = new iTextSharp.text.Document();
+            //    iTextSharp.text.pdf.PdfWriter.GetInstance(document, writer);
+            //    document.Open();
+
+            //    List<IElement> htmlarraylist = html.simpleparser.HTMLWorker.ParseToList(new StringReader(htmlFileAsString), null);
+            //    for (int k = 0; k < htmlarraylist.Count; k++)
+            //    {
+            //        document.Add((IElement)htmlarraylist[k]);
+            //    }
+
+            //    document.Close();
+
+
+            //    //writer.Write(pdf, 0, pdf.Length);
+            //}
+
+            ////PdfDocument pdf = PdfGenerator.GeneratePdf(htmlFileAsString, PdfSharp.PageSize.A4);
+            ////if (!outputFile.EndsWith(".pdf")) outputFile += ".pdf";
+            ////pdf.Save(outputFile);
+
+            ////HtmlToPdf exporter= new HtmlToPdf();
+            ////PdfDocument pdf= exporter.RenderHTMLFileAsPdf(mergedHtmlFilename);
+            ////if (!outputFile.EndsWith(".pdf")) outputFile += ".pdf";
+            ////pdf.SaveAs(outputFile);
         }
     }
 }
