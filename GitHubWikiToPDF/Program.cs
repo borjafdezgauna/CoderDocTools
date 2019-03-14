@@ -24,14 +24,14 @@ namespace GitHubWikiToPDF
         static string userName = null;
         const string projectNameArg = "-project=";
         static string projectName = null;
+        const string authorNameArg = "-author=";
+        static string authorName = null;
         const string inputFileArg = "-input-file=";
         static string inputFile= null;
         const string outputFileArg = "-output-file=";
         static string outputFile = null;
-        const string cssArg = "-css=";
-        static string cssFile = null;
+
         static string tempFolder;
-        static string mergedHtmlFilename;
         static string markDownInputFolder;
 
         enum ExecutionMode { Undefined, GitHubWikiToPDF, LocalMarkdownFileToPDF};
@@ -42,17 +42,16 @@ namespace GitHubWikiToPDF
             foreach(string arg in args)
             {
                 if (arg.StartsWith(projectNameArg)) projectName = arg.Substring(projectNameArg.Length);
-                if (arg.StartsWith(userNameArg)) userName = arg.Substring(userNameArg.Length);
-                if (arg.StartsWith(cssArg)) cssFile = arg.Substring(cssArg.Length);
-                if (arg.StartsWith(inputFileArg)) inputFile = arg.Substring(inputFileArg.Length);
-                if (arg.StartsWith(outputFileArg)) outputFile = arg.Substring(outputFileArg.Length);
+                else if (arg.StartsWith(userNameArg)) userName = arg.Substring(userNameArg.Length);
+                else if (arg.StartsWith(inputFileArg)) inputFile = arg.Substring(inputFileArg.Length);
+                else if (arg.StartsWith(outputFileArg)) outputFile = arg.Substring(outputFileArg.Length);
+                else if (arg.StartsWith(authorNameArg)) authorName = arg.Substring(authorName.Length);
             }
 
             if (projectName != null && userName != null && outputFile != null)
             {
                 tempFolder = projectName;
                 markDownInputFolder = tempFolder;
-                mergedHtmlFilename = tempFolder + "/" + projectName + ".html";
                 inputFile = "Home.md";
                 executionMode = ExecutionMode.GitHubWikiToPDF;
                 return true; //GitHub wiki -> PDF mode
@@ -63,7 +62,6 @@ namespace GitHubWikiToPDF
                 string inputDocName = Path.GetFileNameWithoutExtension(inputFile);
                 markDownInputFolder = Path.GetDirectoryName(inputFile);
                 inputFile = Path.GetFileName(inputFile) ;
-                mergedHtmlFilename = tempFolder + "/" + inputDocName + ".html";
                 executionMode = ExecutionMode.LocalMarkdownFileToPDF;
                 return true; //Local Markdown file -> PDF mode
             }
@@ -96,59 +94,17 @@ namespace GitHubWikiToPDF
                 Console.WriteLine("Skipped");
             }
 
-            //Convert it to html
-            Console.WriteLine("\n#### 2. Converting markdown files to a single .html file");
-            GitHubWikiToHtmlConverter markDownWikiToHtmlConverter = new GitHubWikiToHtmlConverter();
+            //Convert it to PDF
+            Console.WriteLine("\n#### 2. Converting markdown files to a single .pdf file");
 
-            using (StreamWriter htmlWriter = File.CreateText(mergedHtmlFilename))
-            {
-                markDownWikiToHtmlConverter.Convert(htmlWriter, markDownInputFolder, inputFile, tempFolder, cssFile);
-            }
+            WikiToPDFConverter markDownWikiToPDFConverter = new WikiToPDFConverter();
 
-            //Convert the html file to pdf
-            Console.WriteLine("\n#### 3. Generating the PDF file from the merged Html file");
-            string htmlFileAsString = File.ReadAllText(mergedHtmlFilename);
+            markDownWikiToPDFConverter.CreatePDFDocument(projectName, authorName, null);
+
+            markDownWikiToPDFConverter.Convert(markDownInputFolder, inputFile, tempFolder);
+
             if (!outputFile.EndsWith(".pdf")) outputFile += ".pdf";
-
-            PdfSharp.Pdf.PdfDocument document = new PdfDocument();
-            PdfSharp.Pdf.PdfPage page = document.AddPage();
-            PageSize size= page.Size;
-
-            // Create a font
-            XFont font = new XFont("Times", 12, XFontStyle.Bold);
-
-            XGraphics gfx = XGraphics.FromPdfPage(page);
-
-            XRect rect = new XRect(0, 0, page.Width, page.Height);
-            gfx.DrawString("trying PdfSharp", font, XBrushes.DarkRed, rect, XStringFormats.TopLeft);
-            gfx.DrawString("trying PdfSharp to see if i can generate the pdf automatically", font, XBrushes.DarkBlue, rect, XStringFormats.BottomLeft);
-            document.Save(outputFile);
-            //using (FileStream writer = File.Create(outputFile))
-            //{
-            //    iTextSharp.text.Document document = new iTextSharp.text.Document();
-            //    iTextSharp.text.pdf.PdfWriter.GetInstance(document, writer);
-            //    document.Open();
-
-            //    List<IElement> htmlarraylist = html.simpleparser.HTMLWorker.ParseToList(new StringReader(htmlFileAsString), null);
-            //    for (int k = 0; k < htmlarraylist.Count; k++)
-            //    {
-            //        document.Add((IElement)htmlarraylist[k]);
-            //    }
-
-            //    document.Close();
-
-
-            //    //writer.Write(pdf, 0, pdf.Length);
-            //}
-
-            ////PdfDocument pdf = PdfGenerator.GeneratePdf(htmlFileAsString, PdfSharp.PageSize.A4);
-            ////if (!outputFile.EndsWith(".pdf")) outputFile += ".pdf";
-            ////pdf.Save(outputFile);
-
-            ////HtmlToPdf exporter= new HtmlToPdf();
-            ////PdfDocument pdf= exporter.RenderHTMLFileAsPdf(mergedHtmlFilename);
-            ////if (!outputFile.EndsWith(".pdf")) outputFile += ".pdf";
-            ////pdf.SaveAs(outputFile);
+            markDownWikiToPDFConverter.SavePDFDocument(outputFile);
         }
     }
 }
