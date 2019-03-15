@@ -90,7 +90,10 @@ namespace GitHubWikiToPDF
                             wikiLink = match.Groups[2].Value;
                         else wikiLink = text;
 
-                        m_wikiPDFDocument?.AddLinkToLastParagraph(text, LinkToAnchorName(wikiLink));
+                        if (!wikiLink.StartsWith("http"))
+                            m_wikiPDFDocument?.AddLinkToLastParagraph(text, WikifyLink(wikiLink));
+                        else
+                            m_wikiPDFDocument?.AddTextToLastParagraph(wikiLink);
                     }
                     else
                     {
@@ -108,12 +111,6 @@ namespace GitHubWikiToPDF
                         //Add to the list of linked pages
                         LinkedPages.Add(wikiLink + ".md");
                     }
-
-                    //We are merging all source documents to a single one, so links within the wiki need to be converted to anchors
-                    //string htmlLink = "<a href=\"#" + LinkToAnchorName(wikiLink) + "\">" + text + "</a>";
-                    //line = line.Substring(0, match.Index) + htmlLink + line.Substring(match.Index + match.Length);
-
-                    //match = Regex.Match(line, regExpr);
                 }
             }
         }
@@ -122,23 +119,23 @@ namespace GitHubWikiToPDF
         {
             if (line.StartsWith("# "))
             {
-                m_wikiPDFDocument.StartHeader(2);
                 line = line.Substring(2);
+                m_wikiPDFDocument.StartHeader(2, WikifyLink(line)); // <- the title will be used as the name of the reference to be used in links to the page that originated this heading
             }
             else if (line.StartsWith("## "))
             {
-                m_wikiPDFDocument.StartHeader(3);
                 line = line.Substring(3);
+                m_wikiPDFDocument.StartHeader(3, WikifyLink(line)); // <- the title will be used as the name of the reference to be used in links to the page that originated this heading
             }
             else if (line.StartsWith("### "))
             {
-                m_wikiPDFDocument.StartHeader(4);
                 line = line.Substring(4);
+                m_wikiPDFDocument.StartHeader(4);
             }
             else if (line.StartsWith("#### "))
             {
-                m_wikiPDFDocument.StartHeader(5);
                 line = line.Substring(5);
+                m_wikiPDFDocument.StartHeader(5);
             }
             else if (line.StartsWith("```"))
             {
@@ -147,18 +144,18 @@ namespace GitHubWikiToPDF
             }
             else if (line.StartsWith("> "))
             {
-                m_wikiPDFDocument.StartNote(numIndents);
                 line = line.Substring(2);
+                m_wikiPDFDocument.StartNote(numIndents);
             }
             else if (line.StartsWith("* "))
             {
-                m_wikiPDFDocument.AddListItem(numIndents);
                 line = line.Substring(2);
+                m_wikiPDFDocument.AddListItem(numIndents);
             }
             else if (line.StartsWith("- "))
             {
-                m_wikiPDFDocument.AddListItem(numIndents);
                 line = line.Substring(2);
+                m_wikiPDFDocument.AddListItem(numIndents);
             }
             else if (line.StartsWith("!["))
             {
@@ -304,7 +301,7 @@ namespace GitHubWikiToPDF
                 return;
             }
 
-            m_wikiPDFDocument.StartHeader(1);
+            m_wikiPDFDocument.StartHeader(1, Path.GetFileNameWithoutExtension(markdownDocFilename));
             m_wikiPDFDocument.AddTextToLastParagraph(DocNameFromFilename(localFilename));
 
             foreach (string line in lines)

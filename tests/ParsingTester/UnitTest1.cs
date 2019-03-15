@@ -41,6 +41,10 @@ namespace ParsingTester
             Assert.AreEqual(3, splitParts.Count);
             Assert.AreEqual("_My_Variable_", splitParts[1]);
             Assert.AreEqual(".", splitParts[2]);
+            splitParts = converter.SplitByInlinePatterns("The variable is very important (_My_Variable_) or not?");
+            Assert.AreEqual(3, splitParts.Count);
+            Assert.AreEqual("_My_Variable_", splitParts[1]);
+            Assert.AreEqual(") or not?", splitParts[2]);
             splitParts = converter.SplitByInlinePatterns("If you use our software in your research, we kindly ask you to reference [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2573299.svg)](https://doi.org/10.5281/zenodo.2573299).");
             Assert.AreEqual(3, splitParts.Count);
             Assert.AreEqual("If you use our software in your research, we kindly ask you to reference ", splitParts[0]);
