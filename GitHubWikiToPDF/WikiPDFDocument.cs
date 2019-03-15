@@ -65,28 +65,30 @@ namespace GitHubWikiToPDF
             Style style = m_document.Styles["Normal"];
             style.Font.Name = "Verdana";
             style = m_document.Styles[StyleHeading1];
-            style.Font.Size = 14;
+            style.Font.Size = 18;
             style.Font.Bold = true;
-            style.Font.Color = Colors.MidnightBlue;
+            style.Font.Color = Colors.AliceBlue;
             style.ParagraphFormat.PageBreakBefore = true;
             style.ParagraphFormat.SpaceAfter = 6;
             style = m_document.Styles[StyleHeading2];
-            style.Font.Size = 13;
-            style.Font.Color = Colors.DarkMagenta;
+            style.Font.Size = 14;
+            style.Font.Color = Colors.BlueViolet;
             style.Font.Bold = true;
             style.ParagraphFormat.PageBreakBefore = false;
             style.ParagraphFormat.SpaceBefore = 6;
             style.ParagraphFormat.SpaceAfter = 6;
             style = m_document.Styles[StyleHeading3];
-            style.Font.Color = Colors.Magenta;
+            style.Font.Color = Colors.DarkMagenta;
             style.Font.Size = 12;
             style.Font.Bold = true;
             style.Font.Italic = true;
             style = m_document.Styles[StyleHeading4];
+            style.Font.Color = Colors.Purple;
             style.Font.Size = 12;
             style.Font.Bold = true;
             style.Font.Italic = true;
             style = m_document.Styles[StyleHeading5];
+            style.Font.Color = Colors.MidnightBlue;
             style.Font.Size = 12;
             style.Font.Bold = true;
             style.Font.Italic = true;
@@ -112,12 +114,12 @@ namespace GitHubWikiToPDF
             //Close all open lists
             m_numOpenLists = 0;
             m_openListLevel = 0;
-            m_document.LastSection.AddParagraph("", "Heading" + level);
+            m_document?.LastSection.AddParagraph("", "Heading" + level);
         }
 
         public void StartParagraph()
         {
-            m_document.LastSection.AddParagraph("", StyleNormal);
+            m_document?.LastSection.AddParagraph("", StyleNormal);
         }
 
         int m_numOpenLists = 0;
@@ -137,50 +139,82 @@ namespace GitHubWikiToPDF
 
             listInfo.ListType = ListType.BulletList3;
 
-            Paragraph paragraph= m_document.LastSection.AddParagraph("", StyleList);
+            Paragraph paragraph= m_document?.LastSection.AddParagraph("", StyleList);
             paragraph.Format.ListInfo = listInfo;
         }
 
         public void StartNote(int level)
         {
-            m_document.LastSection.AddParagraph("", StyleNote); //TODO: FIX this
+            m_document?.LastSection.AddParagraph("", StyleNote); //TODO: FIX this
         }
 
         bool m_codeBlockOpen = false;
         public void ToggleCodeBlock(int level)
         {
             if (m_codeBlockOpen)
-                m_document.LastSection.AddParagraph("", StyleCode);
+                m_document?.LastSection.AddParagraph("", StyleCode);
             m_codeBlockOpen = !m_codeBlockOpen;
         }
 
+
         public void AddTextToLastParagraph(string text)
         {
-            m_document.LastSection.LastParagraph.AddText(text);
+            m_document?.LastSection.LastParagraph.AddText(text);
         }
 
         public void AddBoldTextToLastParagraph(string text)
         {
-            m_document.LastSection.LastParagraph.AddFormattedText(text, TextFormat.Bold);
+            m_document?.LastSection.LastParagraph.AddFormattedText(text, TextFormat.Bold);
         }
 
         public void AddItalicTextToLastParagraph(string text)
         {
-            m_document.LastSection.LastParagraph.AddFormattedText(text, TextFormat.Italic);
+            m_document?.LastSection.LastParagraph.AddFormattedText(text, TextFormat.Italic);
         }
 
         public void AddInlineCodeToLastParagraph(string text)
         {
-            m_document.LastSection.LastParagraph.AddFormattedText(text, TextFormat.Italic);
+            m_document?.LastSection.LastParagraph.AddFormattedText(text, TextFormat.Italic);
+        }
+
+        public void AddInlineImageToLastParagraph(string filename)
+        {
+            MigraDoc.DocumentObjectModel.Shapes.Image image;
+            if (!filename.EndsWith(".svg"))
+            {
+                image = m_document.LastSection.LastParagraph.AddImage(filename);
+            }
+        }
+
+        public void AddImage(string filename)
+        {
+            MigraDoc.DocumentObjectModel.Shapes.Image image;
+            if (!filename.EndsWith(".svg"))
+            {
+                image = m_document.LastSection.AddParagraph().AddImage(filename);
+                image.Width = "14cm";
+            }
+        }
+
+        public void AddLinkToLastParagraph(string text, string link)
+        {
+
         }
 
         public void Save(string filename)
         {
-            MigraDoc.DocumentObjectModel.IO.DdlWriter.WriteToFile(m_document, "MigraDoc.mdddl");
-            PdfDocumentRenderer renderer = new PdfDocumentRenderer(true);
-            renderer.Document = m_document;
-            renderer.RenderDocument();
-            renderer.PdfDocument.Save(filename);
+            try
+            {
+                MigraDoc.DocumentObjectModel.IO.DdlWriter.WriteToFile(m_document, "MigraDoc.mdddl");
+                PdfDocumentRenderer renderer = new PdfDocumentRenderer(true);
+                renderer.Document = m_document;
+                renderer.RenderDocument();
+                renderer.PdfDocument.Save(filename);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("ERROR: " + e.ToString());
+            }
         }
     }
 }
