@@ -9,42 +9,13 @@ using System.Threading.Tasks;
 
 namespace GitHubWikiToPDF
 {
-    class WikiToPDFConverter
+    public class WikiToPDFConverter
     {
         List<string> ConvertedPages = new List<string>();
         List<string> LinkedPages = new List<string>();
         //List<string> DownloadedImages = new List<string>();
 
         //WebClient webClient= new WebClient(); //used to download images
-
-        int m_numOpenLists = 0;
-        int m_openListLevel = 0;
-        int OpenList(int level)
-        {
-            if (level < m_openListLevel)
-            {
-                //close one list
-                m_numOpenLists--;
-                m_openListLevel = level;
-                return m_numOpenLists;// "</ul>";
-            }
-            if (m_numOpenLists > 0 && level == m_openListLevel) return m_numOpenLists;// "";
-            m_openListLevel = level;
-            m_numOpenLists++;
-            return m_numOpenLists;// "<ul>";
-
-        }
-        void CloseAllOpenLists()
-        {
-            //string closingTags;
-            if (m_numOpenLists == 0) return;// "";
-            //closingTags = "";
-            //for (int i = 0; i < m_numOpenLists; i++)
-            //    closingTags += "</ul>";
-            m_numOpenLists = 0;
-            m_openListLevel = 0;
-            return;// closingTags;
-        }
 
         //string AsItemList(string line, int level) { return OpenList(level) + "<li>" + line.Substring(2) + "</li>"; }
         //string AsParagraph(string line) {  return "<p>" + line + "</p>"; }
@@ -101,134 +72,162 @@ namespace GitHubWikiToPDF
         //    return url;
         //}
 
-        bool ParseLinks(string line, string regExpr)
+        void ParseLinks(string line)
         {
-            Match match = Regex.Match(line, regExpr);
-            if (match.Success)
+            Match match;
+            foreach (string linkPattern in LinkPatterns)
             {
-                string text = match.Groups[1].Value;
-                string wikiLink;
-
-                if (match.Groups.Count > 2)
-                    wikiLink = match.Groups[2].Value;
-                else wikiLink = text;
-
-                if (!wikiLink.StartsWith("http"))
+                match = Regex.Match(line, linkPattern);
+                if (match.Success)
                 {
-                    wikiLink = WikifyLink(wikiLink);
-                    //Add to the list of linked pages
-                    LinkedPages.Add(wikiLink + ".md");
+                    string text = match.Groups[1].Value;
+                    string wikiLink;
+
+                    if (match.Groups.Count > 2)
+                        wikiLink = match.Groups[2].Value;
+                    else wikiLink = text;
+
+                    if (!wikiLink.StartsWith("http"))
+                    {
+                        wikiLink = WikifyLink(wikiLink);
+                        //Add to the list of linked pages
+                        LinkedPages.Add(wikiLink + ".md");
+                    }
+
+                    //We are merging all source documents to a single one, so links within the wiki need to be converted to anchors
+                    //string htmlLink = "<a href=\"#" + LinkToAnchorName(wikiLink) + "\">" + text + "</a>";
+                    //line = line.Substring(0, match.Index) + htmlLink + line.Substring(match.Index + match.Length);
+
+                    //match = Regex.Match(line, regExpr);
                 }
-
-                //We are merging all source documents to a single one, so links within the wiki need to be converted to anchors
-                //string htmlLink = "<a href=\"#" + LinkToAnchorName(wikiLink) + "\">" + text + "</a>";
-                //line = line.Substring(0, match.Index) + htmlLink + line.Substring(match.Index + match.Length);
-
-                //match = Regex.Match(line, regExpr);
             }
-            return false;
         }
-        //string AsTitle(int level, string text)
-        //{
-        //    if (level <= 2)
-        //        return "<h" + level + "><a name=\"" + LinkToAnchorName(WikifyLink(text)) + "\">" + text + "</a></h" + level + ">";
-        //    else
-        //        return "<h" + level + ">" + text + "</h" + level + ">";
-        //}
-        //string Dehtmlfy(string line)
-        //{
-        //    string output = "";
-        //    foreach (char c in line.ToCharArray())
-        //    {
-        //        if (c == '<') output += "&lt;";
-        //        else if (c == '>') output += "&gt;";
-        //        else output += c;
-        //    }
-        //    return output;
-        //}
-
-        //bool IsCodeBlockOpen = false;
-        //string ConvertLinePrefixes(string line, int numIndents)
-        //{
-        //    if (line.StartsWith("```"))
-        //    {
-        //        if (!IsCodeBlockOpen)
-        //        {
-        //            IsCodeBlockOpen = true;
-        //            return "<pre><code>";
-        //        }
-        //        IsCodeBlockOpen = false;
-        //        return "</code></pre>";
-        //    }
-        //    else if (IsCodeBlockOpen)
-        //        return Dehtmlfy(line);
-        //    //<h1> is reserved for the title of the document
-        //    if (line.StartsWith("# ")) return CloseAllOpenLists() + AsTitle(2, line.Substring(2));
-        //    if (line.StartsWith("## ")) return CloseAllOpenLists() + AsTitle(3, line.Substring(3));
-        //    if (line.StartsWith("### ")) return CloseAllOpenLists() + AsTitle(4, line.Substring(4));
-        //    if (line.StartsWith("#### ")) return CloseAllOpenLists() + AsTitle(5, line.Substring(5));
-        //    if (line.StartsWith("> ")) return "<i>" + line.Substring(2) + "</i>";
-        //    if (line.StartsWith("* ")) return AsItemList(line, numIndents);
-        //    if (line.StartsWith("- ")) return AsItemList(line, numIndents);
-        //    return AsParagraph(line);
-
-        //}
-
-        bool ParseByBeginning(string line, int numIndents)
+ 
+        void SetParagraphTypeByLineStart(ref string line, int numIndents)
         {
             if (line.StartsWith("# "))
             {
-                CloseAllOpenLists();
-                m_wikiPDFDocument.AddHeader(line.Substring(2), 2);
-                return true;
+                m_wikiPDFDocument.StartHeader(2);
+                line = line.Substring(2);
             }
-            if (line.StartsWith("## "))
+            else if (line.StartsWith("## "))
             {
-                CloseAllOpenLists();
-                m_wikiPDFDocument.AddHeader(line.Substring(3), 3);
-                return true;
+                m_wikiPDFDocument.StartHeader(3);
+                line = line.Substring(3);
             }
-            if (line.StartsWith("### "))
+            else if (line.StartsWith("### "))
             {
-                CloseAllOpenLists();
-                m_wikiPDFDocument.AddHeader(line.Substring(4), 4);
-                return true;
+                m_wikiPDFDocument.StartHeader(4);
+                line = line.Substring(4);
             }
-            if (line.StartsWith("#### "))
+            else if (line.StartsWith("#### "))
             {
-                CloseAllOpenLists();
-                m_wikiPDFDocument.AddHeader(line.Substring(5), 5);
-                return true;
+                m_wikiPDFDocument.StartHeader(5);
+                line = line.Substring(5);
             }
-            //if (line.StartsWith("> ")) return "<i>" + line.Substring(2) + "</i>";
-            if (line.StartsWith("* ")) m_wikiPDFDocument.AddListItem(line.Substring(2), numIndents);// return AsItemList(line, numIndents);
-            if (line.StartsWith("- ")) m_wikiPDFDocument.AddListItem(line.Substring(2), numIndents);//return AsItemList(line, numIndents);
-            return false;
+            else if (line.StartsWith("```"))
+            {
+                m_wikiPDFDocument.ToggleCodeBlock(2);
+                line = null;
+            }
+            else if (line.StartsWith("> "))
+            {
+                m_wikiPDFDocument.StartNote(numIndents);//return "<i>" + line.Substring(2) + "</i>";
+                line = line.Substring(2);
+            }
+            else if (line.StartsWith("* "))
+            {
+                m_wikiPDFDocument.AddListItem(numIndents);// return AsItemList(line, numIndents);
+                line = line.Substring(2);
+            }
+            else if (line.StartsWith("- "))
+            {
+                m_wikiPDFDocument.AddListItem(numIndents);//return AsItemList(line, numIndents);
+                line = line.Substring(2);
+            }
+            else m_wikiPDFDocument.StartParagraph();
         }
 
+        const string CapturePatternInlineLink1 = @"\[\[([^\]]+)\|([^\]]+)\]\]"; //[[text|url]]
+        const string CapturePatternInlineLink2 = @"\[([^\]]+)\]\(([^\)]+)\)"; //[text](url)
+        const string CapturePatternInlineLink3 = @"\[\[([^\]]+)\]\]"; //[[url]]
 
-        //string SubstitutePattern(string line, string regExpr, string outPrefix, string outPostfix)
-        //{
-        //    Match match;
-        //    match = Regex.Match(line, regExpr);
-        //    while (match.Success)
-        //    {
-        //        string text = match.Groups[1].Value;
+        //Patterns without a capture group
+        const string PatternInlineImage = @"\!\[[^\]]+\]\([^\)]+\)"; //![]()
+        const string PatternInlineLink1 = @"\[\[[^\]]+\|[^\]]+\]\]"; //[[text|url]]
+        const string PatternInlineLink2 = @"\[[^\]]+\]\([^\)]+\)"; //[text](url)
+        const string PatternInlineLink3 = @"\[\[[^\]]+\]\]"; //[[url]]
+        const string PatternInlineBold1 = @"\*\*[^\*]+\*\*"; //**text** <- not sure this is standard or just my thing
+        const string PatternInlineBold2 = @"\*[^\*]+\*"; //*text*
+        const string PatternInlineItalic = @"_[^\.\:\,]+_"; // _text_and_more_text_
+        const string PatternInlineItalic2 = @"_[^_]+_"; // _text and more text_
+        const string PatternInlineCode = @"`[^`]+`"; // ` text `
+        const string PatternAllInlines = "(" + PatternInlineImage + "|" + PatternInlineBold1 + "|" + PatternInlineBold2 + "|" + PatternInlineCode 
+            + "|" + PatternInlineItalic + "|" + PatternInlineItalic2
+            + "|" + PatternInlineLink1 + "|" + PatternInlineLink2 + "|" + PatternInlineLink3 + ")";
+        string [] LinkPatterns = { CapturePatternInlineLink1, CapturePatternInlineLink2, CapturePatternInlineLink3 };
 
-        //        if (match.Groups.Count > 2) // if the pattern includes a character after the main one, we add it to the output. See the pattern used for italics
-        //            line = line.Substring(0, match.Index) + outPrefix + text + outPostfix + match.Groups[2].Value + line.Substring(match.Index + match.Length);
-        //        else line = line.Substring(0, match.Index) + outPrefix + text + outPostfix + line.Substring(match.Index + match.Length);
-
-        //        match = Regex.Match(line, regExpr);
-        //    }
-        //    return line;
-        //}
-        void ParseText(string line)
+        public List<string> SplitByInlinePatterns(string text)
         {
-            ParseLinks(line, @"\[\[([^\]]+)\|([^\]]+)\]\]"); //[[text|url]]
-            ParseLinks(line, @"\[([^\]]+)\]\(([^\)]+)\)"); //[text](url)
-            ParseLinks(line, @"\[\[([^\]]+)\]\]"); //[[url]]
-            m_wikiPDFDocument.AddParagraph(line);
+            int lastStop = 0;
+            List<string> result = new List<string>();
+
+            MatchCollection matches = Regex.Matches(text, PatternAllInlines);
+            if (matches.Count == 0)
+            {
+                //no matches -> all the text is a single element
+                result.Add(text);
+            }
+            else
+            {
+                foreach (Match match in matches)
+                {
+                    if (match.Index > lastStop) result.Add(text.Substring(lastStop, match.Index - lastStop));
+                    result.Add(match.Value);
+                    lastStop = match.Index + match.Length - 1;
+
+                }
+                //add remaining text after the last match if there's any
+                Match lastMatch = matches[matches.Count - 1];
+                int lastMatchEnd = lastMatch.Index + lastMatch.Length;
+                if (lastMatchEnd < text.Length) result.Add(text.Substring(lastMatchEnd));
+            }
+
+            return result;
+        }
+
+        void ParseInlineElements(string line, int numIndents)
+        {
+            if ( line.Length <3 ) return;
+
+            List<string> splitParts = SplitByInlinePatterns(line);
+            foreach (string part in splitParts)
+            {
+                //Inline code
+                if (part.Length > 3)
+                {
+                    if (part[0] == '`' && part[part.Length - 1] == '`')
+                        m_wikiPDFDocument.AddInlineCodeToLastParagraph(part.Substring(1, part.Length - 2));
+                    //Inline bold text
+                    else if (part.Length > 4 && part[0] == '*' && part[1] == '*' && part[part.Length - 2] == '*' && part[part.Length - 1] == '*')
+                        m_wikiPDFDocument.AddBoldTextToLastParagraph(part.Substring(2, part.Length - 4));
+                    else if (part[0] == '*' && part[part.Length - 1] == '*')
+                        m_wikiPDFDocument.AddBoldTextToLastParagraph(part.Substring(1, part.Length - 2));
+                    //Inline italic text
+                    else if (part[0] == '_' && part[part.Length - 1] == '_')
+                        m_wikiPDFDocument.AddItalicTextToLastParagraph(part.Substring(1, part.Length - 2));
+                    //Links
+                    else if (part[0] == '[' && (part[part.Length-1]== ']' || part[part.Length - 1] == ']')) // <- this condition is not 100% fail safe
+                    {
+                        ParseLinks(part);
+                    }
+                    else if (part[0] == '_' && part[part.Length - 1] == '_')
+                        m_wikiPDFDocument.AddItalicTextToLastParagraph(part.Substring(1, part.Length - 2));
+                    //Regular text
+                    else m_wikiPDFDocument.AddTextToLastParagraph(part);
+                }
+            }
+            
         }
         string DocNameFromFilename(string htmlDocFilename)
         {
@@ -277,7 +276,8 @@ namespace GitHubWikiToPDF
                 return;
             }
 
-            m_wikiPDFDocument.AddHeader(DocNameFromFilename(localFilename), 1);
+            m_wikiPDFDocument.StartHeader(1);
+            m_wikiPDFDocument.AddTextToLastParagraph(DocNameFromFilename(localFilename));
 
             foreach (string line in lines)
             {
@@ -285,9 +285,12 @@ namespace GitHubWikiToPDF
                 numIndents = CountSpacesAtBeginning(line);
                 string parsedLine = line.Trim(' ');
 
-                bool match = ParseByBeginning(parsedLine, numIndents);
+                if (parsedLine.Length > 0)
+                {
+                    SetParagraphTypeByLineStart(ref parsedLine, numIndents);
 
-                if (!match) ParseText(parsedLine);
+                    if (parsedLine != null) ParseInlineElements(parsedLine, numIndents);
+                }
 
                 ////parse images, ALWAYS BEFORE REGULAR LINKS
                 //parsedLine = ParseImages(parsedLine, @"!\[([^\]]+)\]\(([^\)]+)\)", inputMarkdownFolder);
@@ -323,6 +326,11 @@ namespace GitHubWikiToPDF
         /// MigraDoc document
         /// </summary>
         WikiPDFDocument m_wikiPDFDocument;
+
+        public WikiToPDFConverter()
+        {
+
+        }
 
         public void CreatePDFDocument(string title, string author = "", string subject= "")
         {

@@ -10,187 +10,6 @@ namespace GitHubWikiToPDF
 {
     class WikiPDFDocument
     {
-        //public static void DefineParagraphs(Document document)
-        //{
-        //    Paragraph paragraph = document.LastSection.AddParagraph("Paragraph Layout Overview", "Heading1");
-        //    paragraph.AddBookmark("Paragraphs");
-
-        //    DemonstrateAlignment(document);
-        //    DemonstrateIndent(document);
-        //    DemonstrateFormattedText(document);
-        //    DemonstrateBordersAndShading(document);
-        //}
-
-        //static void DemonstrateAlignment(Document document)
-        //{
-        //    document.LastSection.AddParagraph("Alignment", "Heading2");
-
-        //    document.LastSection.AddParagraph("Left Aligned", "Heading3");
-
-        //    Paragraph paragraph = document.LastSection.AddParagraph();
-        //    paragraph.Format.Alignment = ParagraphAlignment.Left;
-        //    paragraph.AddText(Text);
-
-        //    document.LastSection.AddParagraph("Right Aligned", "Heading3");
-
-        //    paragraph = document.LastSection.AddParagraph();
-        //    paragraph.Format.Alignment = ParagraphAlignment.Right;
-        //    paragraph.AddText(Text);
-
-        //    document.LastSection.AddParagraph("Centered", "Heading3");
-
-        //    paragraph = document.LastSection.AddParagraph();
-        //    paragraph.Format.Alignment = ParagraphAlignment.Center;
-        //    paragraph.AddText(Text);
-
-        //    document.LastSection.AddParagraph("Justified", "Heading3");
-
-        //    paragraph = document.LastSection.AddParagraph();
-        //    paragraph.Format.Alignment = ParagraphAlignment.Justify;
-        //    paragraph.AddText(Text);
-        //}
-
-        //static void DemonstrateIndent(Document document)
-        //{
-        //    document.LastSection.AddParagraph("Indent", "Heading2");
-
-        //    document.LastSection.AddParagraph("Left Indent", "Heading3");
-
-        //    Paragraph paragraph = document.LastSection.AddParagraph();
-        //    paragraph.Format.LeftIndent = "2cm";
-        //    paragraph.AddText(Text);
-
-        //    document.LastSection.AddParagraph("Right Indent", "Heading3");
-
-        //    paragraph = document.LastSection.AddParagraph();
-        //    paragraph.Format.RightIndent = "1in";
-        //    paragraph.AddText(Text);
-
-        //    document.LastSection.AddParagraph("First Line Indent", "Heading3");
-
-        //    paragraph = document.LastSection.AddParagraph();
-        //    paragraph.Format.FirstLineIndent = "12mm";
-        //    paragraph.AddText(Text);
-
-        //    document.LastSection.AddParagraph("First Line Negative Indent", "Heading3");
-
-        //    //MigraDoc.DocumentObjectModel.Shapes.Image image = document.LastSection.AddImage("SVG-image.svg");
-        //    //image.Width = "10cm";
-
-        //    paragraph = document.LastSection.AddParagraph();
-        //    paragraph.Format.LeftIndent = "1.5cm";
-        //    paragraph.Format.FirstLineIndent = "-1.5cm";
-        //    paragraph.AddText(Text);
-        //}
-
-        //static void DemonstrateFormattedText(Document document)
-        //{
-        //    document.LastSection.AddParagraph("Formatted Text", "Heading2");
-
-        //    Paragraph paragraph = document.LastSection.AddParagraph();
-        //    paragraph.AddText("Text can be formatted ");
-        //    paragraph.AddFormattedText("bold", TextFormat.Bold);
-        //    paragraph.AddText(", ");
-        //    paragraph.AddFormattedText("italic", TextFormat.Italic);
-        //    paragraph.AddText(", or ");
-        //    paragraph.AddFormattedText("bold & italic", TextFormat.Bold | TextFormat.Italic);
-        //    paragraph.AddText(".");
-        //    paragraph.AddLineBreak();
-        //    paragraph.AddText("You can set the ");
-        //    FormattedText formattedText = paragraph.AddFormattedText("size ");
-        //    formattedText.Size = 15;
-        //    paragraph.AddText("the ");
-        //    formattedText = paragraph.AddFormattedText("color ");
-        //    formattedText.Color = Colors.Firebrick;
-        //    paragraph.AddText("the ");
-        //    formattedText = paragraph.AddFormattedText("font", new MigraDoc.DocumentObjectModel.Font("Verdana"));
-        //    paragraph.AddText(".");
-        //    paragraph.AddLineBreak();
-        //    paragraph.AddText("You can set the ");
-        //    formattedText = paragraph.AddFormattedText("subscript");
-        //    formattedText.Subscript = true;
-        //    paragraph.AddText(" or ");
-        //    formattedText = paragraph.AddFormattedText("superscript");
-        //    formattedText.Superscript = true;
-        //    paragraph.AddText(".");
-        //}
-
-        //static void DemonstrateBordersAndShading(Document document)
-        //{
-        //    document.LastSection.AddPageBreak();
-        //    document.LastSection.AddParagraph("Borders and Shading", "Heading2");
-
-        //    document.LastSection.AddParagraph("Border around Paragraph", "Heading3");
-
-        //    Paragraph paragraph = document.LastSection.AddParagraph();
-        //    paragraph.Format.Borders.Width = 2.5;
-        //    paragraph.Format.Borders.Color = Colors.Navy;
-        //    paragraph.Format.Borders.Distance = 3;
-        //    paragraph.AddText(Text);
-
-        //    document.LastSection.AddParagraph("Shading", "Heading3");
-
-        //    paragraph = document.LastSection.AddParagraph();
-        //    paragraph.Format.Shading.Color = Colors.LightCoral;
-        //    paragraph.AddText(Text);
-
-        //    document.LastSection.AddParagraph("Borders & Shading", "Heading3");
-
-        //    paragraph = document.LastSection.AddParagraph();
-        //    paragraph.Style = "TextBox";
-        //    paragraph.AddText(Text);
-        //}
-
-        //public static void DefineCover(Document document)
-        //{
-        //    Section section = document.AddSection();
-
-        //    Paragraph paragraph = section.AddParagraph();
-        //    paragraph.Format.SpaceAfter = "3cm";
-
-        //    MigraDoc.DocumentObjectModel.Shapes.Image image = section.AddImage("PNG-image.png");
-        //    image.WrapFormat.Style = WrapStyle.TopBottom;
-        //    image.LockAspectRatio = true;
-
-        //    paragraph = section.AddParagraph("A sample document that demonstrates the\ncapabilities of MigraDoc");
-        //    paragraph.Format.Font.Size = 16;
-        //    paragraph.Format.Font.Color = Colors.DarkRed;
-        //    paragraph.Format.SpaceBefore = "8cm";
-        //    paragraph.Format.SpaceAfter = "3cm";
-
-        //    paragraph = section.AddParagraph("Rendering date: ");
-        //    paragraph.AddDateField();
-        //}
-        //public static void DefineTableOfContents(Document document)
-        //{
-        //    Section section = document.LastSection;
-
-        //    section.AddPageBreak();
-        //    Paragraph paragraph = section.AddParagraph("Table of Contents");
-        //    paragraph.Format.Font.Size = 14;
-        //    paragraph.Format.Font.Bold = true;
-        //    paragraph.Format.SpaceAfter = 24;
-        //    paragraph.Format.OutlineLevel = OutlineLevel.Level1;
-
-        //    paragraph = section.AddParagraph();
-        //    paragraph.Style = "TOC";
-        //    Hyperlink hyperlink = paragraph.AddHyperlink("Paragraphs");
-        //    hyperlink.AddText("Paragraphs\t");
-        //    hyperlink.AddPageRefField("Paragraphs");
-
-        //    paragraph = section.AddParagraph();
-        //    paragraph.Style = "TOC";
-        //    hyperlink = paragraph.AddHyperlink("Tables");
-        //    hyperlink.AddText("Tables\t");
-        //    hyperlink.AddPageRefField("Tables");
-
-        //    paragraph = section.AddParagraph();
-        //    paragraph.Style = "TOC";
-        //    hyperlink = paragraph.AddHyperlink("Charts");
-        //    hyperlink.AddText("Charts\t");
-        //    hyperlink.AddPageRefField("Charts");
-        //}
-        
         Document m_document;
 
         public WikiPDFDocument(string title, string author, string subject)
@@ -211,10 +30,10 @@ namespace GitHubWikiToPDF
             section.PageSetup.StartingNumber = 1;
 
             HeaderFooter header = section.Headers.Primary;
-            header.AddParagraph("\ttitle");
+            header.AddParagraph("\t" + title);
 
             header = section.Headers.EvenPage;
-            header.AddParagraph("title");
+            header.AddParagraph(title);
 
             // Create a paragraph with centered page number. See definition of style "Footer".
             Paragraph paragraph = new Paragraph();
@@ -228,81 +47,131 @@ namespace GitHubWikiToPDF
             section.Footers.EvenPage.Add(paragraph.Clone());
         }
 
+        const string StyleHeading1 = StyleNames.Heading1;
+        const string StyleHeading2 = StyleNames.Heading2;
+        const string StyleHeading3 = StyleNames.Heading3;
+        const string StyleHeading4 = StyleNames.Heading4;
+        const string StyleHeading5 = StyleNames.Heading5;
+        const string StyleNormal = StyleNames.Normal;
+        const string StyleLink = StyleNames.Hyperlink;
+        const string StyleList = StyleNames.List;
+        const string StyleHeader = StyleNames.Header;
+        const string StyleFooter = StyleNames.Footer;
+        const string StyleNote = "Note";
+        const string StyleCode = "Code";
+
         void DefineStyles()
         {
-            // Get the predefined style Normal.
             Style style = m_document.Styles["Normal"];
             style.Font.Name = "Verdana";
-            // Because all styles are derived from Normal, the next line changes the 
-            // font of the whole document. Or, more exactly, it changes the font of
-            // all styles and paragraphs that do not redefine the font.
-            style.Font.Name = "Times New Roman";
-            // Heading1 to Heading9 are predefined styles with an outline level. An outline level
-            // other than OutlineLevel.BodyText automatically creates the outline (or bookmarks) 
-            // in PDF.
-            style = m_document.Styles[StyleNames.Heading1];
-            style.Font.Name = "Verdana";
+            style = m_document.Styles[StyleHeading1];
             style.Font.Size = 14;
             style.Font.Bold = true;
-            style.Font.Color = Colors.LightSkyBlue;
+            style.Font.Color = Colors.MidnightBlue;
             style.ParagraphFormat.PageBreakBefore = true;
             style.ParagraphFormat.SpaceAfter = 6;
-            style = m_document.Styles[StyleNames.Heading2];
+            style = m_document.Styles[StyleHeading2];
             style.Font.Size = 13;
+            style.Font.Color = Colors.DarkMagenta;
             style.Font.Bold = true;
             style.ParagraphFormat.PageBreakBefore = false;
             style.ParagraphFormat.SpaceBefore = 6;
             style.ParagraphFormat.SpaceAfter = 6;
-            style = m_document.Styles[StyleNames.Heading3];
+            style = m_document.Styles[StyleHeading3];
+            style.Font.Color = Colors.Magenta;
             style.Font.Size = 12;
             style.Font.Bold = true;
             style.Font.Italic = true;
-            style = m_document.Styles[StyleNames.Heading4];
+            style = m_document.Styles[StyleHeading4];
             style.Font.Size = 12;
             style.Font.Bold = true;
             style.Font.Italic = true;
-            style = m_document.Styles[StyleNames.Heading5];
+            style = m_document.Styles[StyleHeading5];
             style.Font.Size = 12;
             style.Font.Bold = true;
             style.Font.Italic = true;
             style.ParagraphFormat.SpaceBefore = 6;
             style.ParagraphFormat.SpaceAfter = 3;
-            style = m_document.Styles[StyleNames.Header];
+
+            style = m_document.Styles[StyleHeader];
             style.ParagraphFormat.AddTabStop("16cm", TabAlignment.Right);
-            style = m_document.Styles[StyleNames.Footer];
+            style = m_document.Styles[StyleFooter];
             style.ParagraphFormat.AddTabStop("8cm", TabAlignment.Center);
-            // Create a new style called TextBox based on style Normal
-            style = m_document.Styles.AddStyle("TextBox", "Normal");
-            style.ParagraphFormat.Alignment = ParagraphAlignment.Justify;
-            style.ParagraphFormat.Borders.Width = 2.5;
-            style.ParagraphFormat.Borders.Distance = "3pt";
-            style.ParagraphFormat.Shading.Color = Colors.Black;
-            // Create a new style called TOC based on style Normal
-            style = m_document.Styles.AddStyle("TOC", "Normal");
-            style.ParagraphFormat.AddTabStop("16cm", TabAlignment.Right, TabLeader.Dots);
-            style.ParagraphFormat.Font.Color = Colors.Black;
+
+            //Add our own styles needed for markdown files
+            style = m_document.Styles.AddStyle(StyleCode, StyleNormal);
+            style.Font.Color = Colors.Red;
+            style = m_document.Styles.AddStyle(StyleNote, StyleNormal);
+            style.Font.Color = Colors.Purple;
+            style = m_document.Styles.AddStyle(StyleList, StyleNormal);
+            style.ParagraphFormat.LeftIndent = "0.5cm";
         }
 
-        public void AddHeader(string text, int level)
+        public void StartHeader(int level)
         {
-            string style = "Heading" + level;
-            m_document.LastSection.AddParagraph(text, style);
+            //Close all open lists
+            m_numOpenLists = 0;
+            m_openListLevel = 0;
+            m_document.LastSection.AddParagraph("", "Heading" + level);
         }
 
-        public void AddParagraph(string text)
+        public void StartParagraph()
         {
-            string style = StyleNames.Normal;
-            m_document.LastSection.AddParagraph(text, style);
+            m_document.LastSection.AddParagraph("", StyleNormal);
         }
 
-        public void AddListItem(string text, int level)
+        int m_numOpenLists = 0;
+        int m_openListLevel = 0;
+
+        public void AddListItem(int level)
         {
-            //m_document.LastSection.Ad
+            ListInfo listInfo = new ListInfo();
+
+            listInfo.ContinuePreviousList = m_numOpenLists>0 && level == m_openListLevel;
+
+            if (level > m_openListLevel || m_numOpenLists == 0)
+            {
+                m_numOpenLists++;
+                m_openListLevel = level;
+            }
+
+            listInfo.ListType = ListType.BulletList3;
+
+            Paragraph paragraph= m_document.LastSection.AddParagraph("", StyleList);
+            paragraph.Format.ListInfo = listInfo;
         }
 
-        public void AddFormattedTextToLastParagraph(string text, TextFormat format)
+        public void StartNote(int level)
         {
-            m_document.LastSection.LastParagraph.AddFormattedText(text, format);
+            m_document.LastSection.AddParagraph("", StyleNote); //TODO: FIX this
+        }
+
+        bool m_codeBlockOpen = false;
+        public void ToggleCodeBlock(int level)
+        {
+            if (m_codeBlockOpen)
+                m_document.LastSection.AddParagraph("", StyleCode);
+            m_codeBlockOpen = !m_codeBlockOpen;
+        }
+
+        public void AddTextToLastParagraph(string text)
+        {
+            m_document.LastSection.LastParagraph.AddText(text);
+        }
+
+        public void AddBoldTextToLastParagraph(string text)
+        {
+            m_document.LastSection.LastParagraph.AddFormattedText(text, TextFormat.Bold);
+        }
+
+        public void AddItalicTextToLastParagraph(string text)
+        {
+            m_document.LastSection.LastParagraph.AddFormattedText(text, TextFormat.Italic);
+        }
+
+        public void AddInlineCodeToLastParagraph(string text)
+        {
+            m_document.LastSection.LastParagraph.AddFormattedText(text, TextFormat.Italic);
         }
 
         public void Save(string filename)

@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bundler", "Bundler\Bundler.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PdfSharpTest", "PdfSharpTEst\PdfSharpTest.csproj", "{3E7E2ABF-6216-4605-A68D-9461B847E51E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{8927A44E-FE58-4BF2-9FB6-222C297C043C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParsingTester", "tests\ParsingTester\ParsingTester.csproj", "{A611FDD5-C0E4-4AD6-A10F-63139FD2F07E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,9 +31,16 @@ Global
 		{3E7E2ABF-6216-4605-A68D-9461B847E51E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3E7E2ABF-6216-4605-A68D-9461B847E51E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3E7E2ABF-6216-4605-A68D-9461B847E51E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A611FDD5-C0E4-4AD6-A10F-63139FD2F07E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A611FDD5-C0E4-4AD6-A10F-63139FD2F07E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A611FDD5-C0E4-4AD6-A10F-63139FD2F07E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A611FDD5-C0E4-4AD6-A10F-63139FD2F07E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A611FDD5-C0E4-4AD6-A10F-63139FD2F07E} = {8927A44E-FE58-4BF2-9FB6-222C297C043C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {769A963A-E385-4445-842F-11E7A2D37287}
