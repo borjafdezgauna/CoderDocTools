@@ -51,12 +51,10 @@ namespace GitHubWikiToPDF
         const string StyleHeading4 = StyleNames.Heading4;
         const string StyleHeading5 = StyleNames.Heading5;
         const string StyleNormal = StyleNames.Normal;
-        const string StyleNormal1 = StyleNames.Normal + "1";
-        const string StyleNormal2 = StyleNames.Normal + "2";
         const string StyleLink = StyleNames.Hyperlink;
-        const string StyleList1 = StyleNames.List;
-        const string StyleList2 = StyleNames.List + "1";
-        const string StyleList3 = StyleNames.List + "2";
+        const string StyleList1 = StyleNames.List + "1";
+        const string StyleList2 = StyleNames.List + "2";
+        const string StyleList3 = StyleNames.List + "3";
         const string StyleHeader = StyleNames.Header;
         const string StyleFooter = StyleNames.Footer;
         const string StyleNote = "Note";
@@ -70,7 +68,6 @@ namespace GitHubWikiToPDF
             //Normal
             Style style = m_document.Styles["Normal"];
             style.Font.Name = "CMU Serif";
-            style.Font.Name = "Helvetica";
             style.ParagraphFormat.Alignment = ParagraphAlignment.Justify;
             style.ParagraphFormat.SpaceAfter = Unit.FromCentimeter(0.25);
             style.ParagraphFormat.SpaceBefore = Unit.FromCentimeter(0.25);
@@ -120,32 +117,20 @@ namespace GitHubWikiToPDF
             style = m_document.Styles[StyleHyperlink];
             style.Font.Color = HyperlinkColor;
 
-            //Normal - level 1
-            style = m_document.AddStyle(StyleNormal1, StyleNormal);
-            style.ParagraphFormat.LeftIndent = Unit.FromCentimeter(1);
-            style = m_document.AddStyle(StyleNormal2, StyleNormal);
-            style.ParagraphFormat.LeftIndent = Unit.FromCentimeter(1.5);
-
             //List - level 1
-            style = m_document.Styles[StyleList1];
+            style = m_document.AddStyle(StyleList1, StyleNormal);
             style.ParagraphFormat.Alignment = ParagraphAlignment.Justify;
-            style.ParagraphFormat.LeftIndent = Unit.FromCentimeter(1);
-            style.ParagraphFormat.FirstLineIndent = Unit.FromCentimeter(0);
-            style.ParagraphFormat.SpaceAfter = Unit.FromCentimeter(0.2);
-            style.ParagraphFormat.SpaceBefore = Unit.FromCentimeter(0.2);
-            style.ParagraphFormat.OutlineLevel = OutlineLevel.Level1;
+            style.ParagraphFormat.LeftIndent = Unit.FromCentimeter(0.25);
+            style.ParagraphFormat.FirstLineIndent = Unit.FromCentimeter(-0.2);
             
             //List - level 2
             style = m_document.AddStyle(StyleList2, StyleList1);
             style.ParagraphFormat.OutlineLevel = OutlineLevel.Level2;
-            style.ParagraphFormat.LeftIndent = Unit.FromCentimeter(1.5);
-            style.ParagraphFormat.FirstLineIndent = Unit.FromCentimeter(0);
+            style.ParagraphFormat.LeftIndent = Unit.FromCentimeter(0.5);
 
             //List - level 3
             style = m_document.AddStyle(StyleList3, StyleList1);
-            style.ParagraphFormat.OutlineLevel = OutlineLevel.Level3;
-            style.ParagraphFormat.LeftIndent = Unit.FromCentimeter(1.5);
-            style.ParagraphFormat.FirstLineIndent = Unit.FromCentimeter(0);
+            style.ParagraphFormat.LeftIndent = Unit.FromCentimeter(1);
 
             //Page Header
             style = m_document.Styles[StyleHeader];
@@ -187,7 +172,6 @@ namespace GitHubWikiToPDF
             style.Font.Color = InlineCodeColor;
 
             //Note
-
             style = m_document.Styles.AddStyle(StyleNote, StyleCode);
             style.Font.Name = "Helvetica";
             style.Font.Color = InlineCodeColor;
@@ -248,7 +232,6 @@ namespace GitHubWikiToPDF
 
             //Close all open lists
             m_numOpenLists = 0;
-            m_openListLevel = 0;
 
             if (level == 1) StartSection();
 
@@ -257,17 +240,22 @@ namespace GitHubWikiToPDF
                 headingParagraph.AddBookmark(refName);
         }
 
-        public void StartParagraph()
+        public void StartParagraph(int numIndents)
         {
             //We do nothing if we are in a code block
             if (CurrentParagraphType != ParagraphType.Code)
             {
                 string style;
-                switch (m_numOpenLists)
+                if (numIndents == 0 || m_numOpenLists == 0) { style = StyleNormal; CurrentParagraphType = ParagraphType.Normal; }
+                else
                 {
-                    case 1: style = StyleNormal1; break;
-                    case 2: style = StyleNormal2; break;
-                    default: style = StyleNormal; CurrentParagraphType = ParagraphType.Normal; break;
+                    switch (m_numOpenLists)
+                    {
+                        case 1: style = StyleList1; break;
+                        case 2: style = StyleList2; break;
+                        case 3: style = StyleList3; break;
+                        default: style = StyleNormal; CurrentParagraphType = ParagraphType.Normal; break;
+                    }
                 }
                 m_document?.LastSection.AddParagraph("", style);
             }
@@ -277,32 +265,29 @@ namespace GitHubWikiToPDF
         ParagraphType CurrentParagraphType;
 
         int m_numOpenLists = 0;
-        int m_openListLevel = 0;
+        const int maxNumLists = 3;
+        int [] m_openListLevel= new int[maxNumLists];
 
         public void AddListItem(int level)
         {
             CurrentParagraphType = ParagraphType.List;
-            ListInfo listInfo = new ListInfo();
 
-            listInfo.ContinuePreviousList = m_numOpenLists>0 && level == m_openListLevel;
-
-            if (level > m_openListLevel || m_numOpenLists == 0)
+            if (m_numOpenLists == 0 || level > m_openListLevel[m_numOpenLists-1])
             {
+                m_openListLevel[m_numOpenLists] = level;
                 m_numOpenLists++;
-                m_openListLevel = level;
-            }
 
-            listInfo.ListType = ListType.BulletList1;
+            }
 
             string style;
-            switch(m_numOpenLists)
+            string bullet;
+            switch (m_numOpenLists)
             {
-                case 1: style = StyleList1; break;
-                case 2: style = StyleList2; break;
-                default: style = StyleList3; break;
+                case 1: style = StyleList1; bullet = "- "; break;
+                case 2: style = StyleList2; bullet = "* "; break;
+                default: style = StyleList3; bullet = "- "; break;
             }
-            Paragraph paragraph= m_document?.LastSection.AddParagraph("", style);
-            paragraph.Format.ListInfo = listInfo;
+            Paragraph paragraph= m_document?.LastSection.AddParagraph(bullet, style);
         }
 
         public void StartNote(int level)

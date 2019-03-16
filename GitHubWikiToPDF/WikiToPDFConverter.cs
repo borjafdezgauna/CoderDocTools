@@ -162,7 +162,7 @@ namespace GitHubWikiToPDF
                 ParseImage(line, false);
                 line = null;
             }
-            else m_wikiPDFDocument?.StartParagraph();           
+            else m_wikiPDFDocument?.StartParagraph(numIndents);           
         }
 
         const string CapturePatternImage= @"\!\[([^\]]+)\]\(([^\)]+)\)"; //![]()
