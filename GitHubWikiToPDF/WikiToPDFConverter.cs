@@ -93,7 +93,7 @@ namespace GitHubWikiToPDF
                         if (!wikiLink.StartsWith("http"))
                             m_wikiPDFDocument?.AddLinkToLastParagraph(text, WikifyLink(wikiLink));
                         else
-                            m_wikiPDFDocument?.AddTextToLastParagraph(wikiLink);
+                            m_wikiPDFDocument?.AddLinkToLastParagraph(text, wikiLink);
                     }
                     else
                     {
@@ -179,12 +179,10 @@ namespace GitHubWikiToPDF
         const string PatternInlineLink3 = @"\[\[[^\]\|]+\]\]"; //[[url]]
         const string PatternInlineBold1 = @"\*\*[^\*]+\*\*"; //**text** <- not sure this is standard or just my thing
         const string PatternInlineBold2 = @"\*[^\*]+\*"; //*text*
-        const string PatternInlineItalic = @"_[^\.\:\,]+_"; // _text_and_more_text_
-        const string PatternInlineItalic2 = @"_[^_]+_"; // _text and more text_
+        const string PatternInlineItalic = @"(?<!\w)_[\w\s_\-]+_(?!\w)";
         const string PatternInlineCode = @"`[^`]+`"; // ` text `
         const string PatternAllInlines = "(" + PatterInlineLinkedImage + "|" + PatternInlineImage + "|" + PatternInlineBold1 + "|" + PatternInlineBold2 + "|" + PatternInlineCode 
-            + "|" + PatternInlineItalic + "|" + PatternInlineItalic2
-            + "|" + PatternInlineLink1 + "|" + PatternInlineLink2 + "|" + PatternInlineLink3 + ")";
+            + "|" + PatternInlineItalic + "|" + PatternInlineLink1 + "|" + PatternInlineLink2 + "|" + PatternInlineLink3 + ")";
         string [] LinkPatterns = { CapturePatternInlineLinkedImage, CapturePatternInlineLink1, CapturePatternInlineLink2, CapturePatternInlineLink3 };
 
         public List<string> SplitByInlinePatterns(string text)
@@ -218,7 +216,7 @@ namespace GitHubWikiToPDF
 
         public void ParseInlineElements(string line, int numIndents)
         {
-            if ( line.Length <3 ) return;
+            if ( line == null || line.Length == 0 ) return;
 
             List<string> splitParts = SplitByInlinePatterns(line);
             foreach (string part in splitParts)
@@ -251,6 +249,7 @@ namespace GitHubWikiToPDF
                         if (!isImage) m_wikiPDFDocument?.AddTextToLastParagraph(part);
                     }
                 }
+                else m_wikiPDFDocument?.AddTextToLastParagraph(part);
             }
             
         }
@@ -275,7 +274,7 @@ namespace GitHubWikiToPDF
         public void Convert(string inputMarkdownFolder, string markdownDocFilename, string outputHtmlFolder)
         {
             //we ignore external references
-            List<string> ignoredPrefixes = new List<string>(){ "http://", "https://" };
+            List<string> ignoredPrefixes = new List<string>(){ "http" };
             foreach (string ignoredPrefix in ignoredPrefixes)
             {
                 if (markdownDocFilename.StartsWith(ignoredPrefix))
@@ -308,13 +307,20 @@ namespace GitHubWikiToPDF
             {
                 int numIndents = 0;
                 numIndents = CountSpacesAtBeginning(line);
-                string parsedLine = line.Trim(' ');
+                string trimmedLine= line.Trim(' ');
 
-                if (parsedLine.Length > 0)
+                if (trimmedLine.Length > 0)
                 {
-                    SetParagraphTypeByLineStart(ref parsedLine, numIndents);
+                    SetParagraphTypeByLineStart(ref trimmedLine, numIndents);
 
-                    if (parsedLine != null) ParseInlineElements(parsedLine, numIndents);
+                    if (trimmedLine != null)
+                    {
+                        if (!m_wikiPDFDocument.IsCodeBlockOpen())
+                            ParseInlineElements(trimmedLine, numIndents);
+                        else
+                            //we add the line unparsed if there's a code block open
+                            m_wikiPDFDocument.AddTextToLastParagraph(line, numIndents);
+                    }
                 }
             }
 

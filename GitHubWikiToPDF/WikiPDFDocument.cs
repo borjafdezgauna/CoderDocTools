@@ -12,41 +12,37 @@ namespace GitHubWikiToPDF
     class WikiPDFDocument
     {
         Document m_document;
+        string m_docTitle;
 
         public WikiPDFDocument(string title, string author, string subject)
         {
             // Create a new MigraDoc document
             m_document = new Document();
 
+            m_document.UseCmykColor = false;
             m_document.Info.Title = title;
             m_document.Info.Subject = subject;
             m_document.Info.Author = author;
+            m_docTitle = title;
 
             //Add style definitions to the document
             DefineStyles();
+        }
 
-            //Add main content section
-            Section section = m_document.AddSection();
-            section.PageSetup.OddAndEvenPagesHeaderFooter = true;
-            section.PageSetup.StartingNumber = 1;
-
-            HeaderFooter header = section.Headers.Primary;
-            header.AddParagraph("\t" + title);
-
-            header = section.Headers.EvenPage;
-            header.AddParagraph("\t" + title);
-            header.AddTextFrame();
-
-            // Create a paragraph with centered page number. See definition of style "Footer".
-            Paragraph paragraph = new Paragraph();
-            paragraph.AddTab();
-            paragraph.AddPageField();
-
-            // Add paragraph to footer for odd pages.
-            section.Footers.Primary.Add(paragraph);
-            // Add clone of paragraph to footer for odd pages. Cloning is necessary because an object must
-            // not belong to more than one other object. If you forget cloning an exception is thrown.
-            section.Footers.EvenPage.Add(paragraph.Clone());
+        public void Save(string filename)
+        {
+            try
+            {
+                MigraDoc.DocumentObjectModel.IO.DdlWriter.WriteToFile(m_document, "MigraDoc.mdddl");
+                PdfDocumentRenderer renderer = new PdfDocumentRenderer(true);
+                renderer.Document = m_document;
+                renderer.RenderDocument();
+                renderer.PdfDocument.Save(filename);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error saving the PDF file:\n" + e.ToString());
+            }
         }
 
         const string StyleHeading1 = StyleNames.Heading1;
@@ -65,82 +61,111 @@ namespace GitHubWikiToPDF
         const string StyleFooter = StyleNames.Footer;
         const string StyleNote = "Note";
         const string StyleCode = "Code";
+        const string StyleInlineCode = "InlineCode";
         const string StyleImage = "Image";
         const string StyleHyperlink = StyleNames.Hyperlink;
 
         void DefineStyles()
         {
+            //Normal
             Style style = m_document.Styles["Normal"];
             style.Font.Name = "Helvetica";
             style.ParagraphFormat.Alignment = ParagraphAlignment.Justify;
-            //style.ParagraphFormat.SpaceAfter = "0.75cm";
+            style.ParagraphFormat.SpaceAfter = Unit.FromCentimeter(0.25);
+            style.ParagraphFormat.SpaceBefore = Unit.FromCentimeter(0.25);
+
+            //Heading 1
             style = m_document.Styles[StyleHeading1];
             style.ParagraphFormat.Alignment = ParagraphAlignment.Left;
+            style.ParagraphFormat.SpaceAfter = Unit.FromCentimeter(0.5);
+            style.ParagraphFormat.SpaceBefore = Unit.FromCentimeter(0);
             style.Font.Size = 20;
             style.Font.Bold = true;
             style.Font.Color = Colors.Black;
             style.ParagraphFormat.PageBreakBefore = true;
             style.ParagraphFormat.SpaceAfter = 6;
+
+            //Heading 2
             style = m_document.Styles[StyleHeading2];
+            style.ParagraphFormat.SpaceAfter = Unit.FromCentimeter(0.4);
+            style.ParagraphFormat.SpaceBefore = Unit.FromCentimeter(0.5);
             style.Font.Size = 16;
-            style.ParagraphFormat.SpaceBefore = "3cm";
-            style.ParagraphFormat.SpaceAfter = "1.5cm";
             style.Font.Bold = true;
             style.ParagraphFormat.PageBreakBefore = false;
-            style.ParagraphFormat.SpaceBefore = 6;
-            style.ParagraphFormat.SpaceAfter = 6;
+
+            //Heading 3
             style = m_document.Styles[StyleHeading3];
-            //style.Font.Color = Colors.BlueViolet;
+            style.ParagraphFormat.SpaceAfter = Unit.FromCentimeter(0.4);
+            style.ParagraphFormat.SpaceBefore = Unit.FromCentimeter(0.5);
             style.Font.Size = 14;
             style.Font.Bold = true;
-            style.Font.Italic = true;
+
+            //Heading 4
             style = m_document.Styles[StyleHeading4];
-            //style.Font.Color = Colors.Purple;
             style.Font.Size = 12;
             style.Font.Bold = true;
             style.Font.Italic = true;
+
+            //Heading 5
             style = m_document.Styles[StyleHeading5];
-            //style.Font.Color = Colors.MidnightBlue;
+            style.ParagraphFormat.SpaceAfter = Unit.FromCentimeter(1);
+            style.ParagraphFormat.SpaceBefore = Unit.FromCentimeter(0.5);
             style.Font.Size = 10;
             style.Font.Bold = true;
             style.Font.Italic = true;
-            style.ParagraphFormat.SpaceBefore = 6;
-            style.ParagraphFormat.SpaceAfter = 3;
 
+            //Hyperlinks
             style = m_document.Styles[StyleHyperlink];
-            style.Font.Color = Colors.Blue;
+            style.Font.Color = Colors.BlueViolet;
 
             //Normal - level 1
             style = m_document.AddStyle(StyleNormal1, StyleNormal);
-            style.ParagraphFormat.LeftIndent = "1cm";
+            style.ParagraphFormat.LeftIndent = Unit.FromCentimeter(1);
             style = m_document.AddStyle(StyleNormal2, StyleNormal);
-            style.ParagraphFormat.LeftIndent = "1.5cm";
+            style.ParagraphFormat.LeftIndent = Unit.FromCentimeter(1.5);
 
             //List - level 1
             style = m_document.Styles[StyleList1];
-            style.ParagraphFormat.LeftIndent = "0.5cm";
-            style.ParagraphFormat.FirstLineIndent = "0cm";
-            style.ParagraphFormat.Alignment = ParagraphAlignment.Left;
-            style.ParagraphFormat.SpaceAfter = "0.2cm";
-            style.ParagraphFormat.SpaceBefore = "0.2cm";
+            style.ParagraphFormat.Alignment = ParagraphAlignment.Justify;
+            style.ParagraphFormat.LeftIndent = Unit.FromCentimeter(1);
+            style.ParagraphFormat.FirstLineIndent = Unit.FromCentimeter(0);
+            style.ParagraphFormat.SpaceAfter = Unit.FromCentimeter(0.2);
+            style.ParagraphFormat.SpaceBefore = Unit.FromCentimeter(0.2);
             style.ParagraphFormat.OutlineLevel = OutlineLevel.Level1;
-
+            
+            //List - level 2
             style = m_document.AddStyle(StyleList2, StyleList1);
             style.ParagraphFormat.OutlineLevel = OutlineLevel.Level2;
-            style.ParagraphFormat.LeftIndent = "1cm";
+            style.ParagraphFormat.LeftIndent = Unit.FromCentimeter(1.5);
+            style.ParagraphFormat.FirstLineIndent = Unit.FromCentimeter(0);
+
+            //List - level 3
             style = m_document.AddStyle(StyleList3, StyleList1);
             style.ParagraphFormat.OutlineLevel = OutlineLevel.Level3;
-            style.ParagraphFormat.LeftIndent = "1.5cm";
+            style.ParagraphFormat.LeftIndent = Unit.FromCentimeter(1.5);
+            style.ParagraphFormat.FirstLineIndent = Unit.FromCentimeter(0);
 
+            //Page Header
             style = m_document.Styles[StyleHeader];
             style.ParagraphFormat.AddTabStop("16cm", TabAlignment.Right);
+            style.ParagraphFormat.Borders.Bottom.Color = Colors.DarkGray;
+            style.ParagraphFormat.Borders.Top.Visible = false;
+            style.ParagraphFormat.Borders.Left.Visible = false;
+            style.ParagraphFormat.Borders.Right.Visible = false;
+            style.ParagraphFormat.Borders.Width = 0.5;
+            //Page Footer
             style = m_document.Styles[StyleFooter];
             style.ParagraphFormat.AddTabStop("8cm", TabAlignment.Center);
+            style.ParagraphFormat.Borders.Top.Color = Colors.DarkGray;
+            style.ParagraphFormat.Borders.Bottom.Visible = false;
+            style.ParagraphFormat.Borders.Left.Visible = false;
+            style.ParagraphFormat.Borders.Right.Visible = false;
 
             //Add our own styles needed for markdown files
-            Color codeBackground = new Color(248, 248, 248);
-            Color codeBorder = new Color(234, 234, 234);
+            Color codeBackground = new Color(236, 236, 236);
+            Color codeBorder = new Color(160, 160, 160);
 
+            //Code
             style = m_document.Styles.AddStyle(StyleCode, StyleNormal);
             style.Font.Color = Colors.Black;
             style.ParagraphFormat.SpaceBefore = "0.5cm";
@@ -151,8 +176,14 @@ namespace GitHubWikiToPDF
             style.Font.Name = "Courier";
             style.ParagraphFormat.Shading.Color = codeBackground;
             style.ParagraphFormat.Alignment = ParagraphAlignment.Left;
-            style.ParagraphFormat.LeftIndent = "1.5cm";
-            style.ParagraphFormat.RightIndent = "1.5cm";
+            style.ParagraphFormat.LeftIndent = Unit.FromCentimeter(0.5);
+            style.ParagraphFormat.RightIndent = Unit.FromCentimeter(0.5);
+
+            //Inline code
+            style = m_document.Styles.AddStyle(StyleInlineCode, StyleCode);
+            style.Font.Color = Colors.DarkMagenta;
+
+            //Note
             style = m_document.Styles.AddStyle(StyleNote, StyleCode);
             style.Font.Name = "Helvetica";
 
@@ -162,11 +193,60 @@ namespace GitHubWikiToPDF
             style.ParagraphFormat.Alignment = ParagraphAlignment.Center;
         }
 
+        void SetHeaderText(string header)
+        {
+            Paragraph paragraph= m_document?.LastSection.Headers.Primary.AddParagraph("");
+            paragraph.AddTab();
+            paragraph.AddText(header);
+            paragraph = m_document?.LastSection.Headers.EvenPage.AddParagraph("");
+            paragraph.AddTab();
+            paragraph.AddText(header);
+        }
+
+        bool bFirstSection = true;
+        void StartSection()
+        {
+            //Add new section
+            Section section = m_document.AddSection();
+            section.PageSetup.OddAndEvenPagesHeaderFooter = true;
+            if (bFirstSection)
+            {
+                section.PageSetup.StartingNumber = 1;
+                bFirstSection = false;
+            }
+
+            // Create a paragraph with centered page number. See definition of style "Footer".
+            Paragraph paragraph = new Paragraph();
+            paragraph.AddTab();
+            paragraph.AddPageField();
+
+            // Add paragraph to footer for odd pages.
+            section.Footers.Primary.Add(paragraph);
+            // Add clone of paragraph to footer for odd pages. Cloning is necessary because an object must
+            // not belong to more than one other object. If you forget cloning an exception is thrown.
+            section.Footers.EvenPage.Add(paragraph.Clone());
+        }
+
         public void StartHeader(int level, string refName = null)
         {
+            switch (level)
+            {
+                case 1:
+                    CurrentParagraphType = ParagraphType.Heading1; break;
+                case 2:
+                    CurrentParagraphType = ParagraphType.Heading2; break;
+                case 3:
+                    CurrentParagraphType = ParagraphType.Heading3; break;
+                default:
+                    CurrentParagraphType = ParagraphType.Heading4; break;
+            }
+
             //Close all open lists
             m_numOpenLists = 0;
             m_openListLevel = 0;
+
+            if (level == 1) StartSection();
+
             Paragraph headingParagraph = m_document?.LastSection.AddParagraph("", "Heading" + level);
             if (level < 4 && refName != null)
                 headingParagraph.AddBookmark(refName);
@@ -174,7 +254,8 @@ namespace GitHubWikiToPDF
 
         public void StartParagraph()
         {
-            if (!m_codeBlockOpen)
+            //We do nothing if we are in a code block
+            if (CurrentParagraphType != ParagraphType.Code)
             {
                 string style;
                 switch (m_numOpenLists)
@@ -187,11 +268,15 @@ namespace GitHubWikiToPDF
             }
         }
 
+        enum ParagraphType {Heading1, Heading2, Heading3, Heading4, Code, Image, Normal, List, Note};
+        ParagraphType CurrentParagraphType;
+
         int m_numOpenLists = 0;
         int m_openListLevel = 0;
 
         public void AddListItem(int level)
         {
+            CurrentParagraphType = ParagraphType.List;
             ListInfo listInfo = new ListInfo();
 
             listInfo.ContinuePreviousList = m_numOpenLists>0 && level == m_openListLevel;
@@ -217,23 +302,38 @@ namespace GitHubWikiToPDF
 
         public void StartNote(int level)
         {
+            CurrentParagraphType = ParagraphType.Note;
             m_document?.LastSection.AddParagraph("", StyleNote);
         }
 
-        bool m_codeBlockOpen = false;
         public void ToggleCodeBlock(int level)
         {
-            if (!m_codeBlockOpen)
+            if (CurrentParagraphType != ParagraphType.Code)
+            {
+                CurrentParagraphType = ParagraphType.Code;
                 m_document?.LastSection.AddParagraph("", StyleCode);
-            m_codeBlockOpen = !m_codeBlockOpen;
+            }
+            else CurrentParagraphType = ParagraphType.Normal;
+        }
+        public bool IsCodeBlockOpen()
+        {
+            return CurrentParagraphType == ParagraphType.Code;
         }
 
-
-        public void AddTextToLastParagraph(string text)
+        public void AddTextToLastParagraph(string text, int numIndents= 0)
         {
-            if (!m_codeBlockOpen )
+            if (CurrentParagraphType == ParagraphType.Heading1)
+            {
+                SetHeaderText(m_docTitle + ". " + text);
                 m_document?.LastSection.LastParagraph.AddText(text);
-            else m_document?.LastSection.LastParagraph.AddText(text + "\n");
+            }
+            else if (CurrentParagraphType == ParagraphType.Code)
+            {
+                m_document?.LastSection.LastParagraph.AddSpace(numIndents);
+                m_document?.LastSection.LastParagraph.AddText(text + "\n");
+            }
+            else
+                m_document?.LastSection.LastParagraph.AddText(text);
         }
 
         public void AddBoldTextToLastParagraph(string text)
@@ -248,15 +348,15 @@ namespace GitHubWikiToPDF
 
         public void AddInlineCodeToLastParagraph(string text)
         {
-            m_document?.LastSection.LastParagraph.AddFormattedText(text, TextFormat.Italic);
+            m_document?.LastSection.LastParagraph.AddFormattedText(text, StyleInlineCode);
         }
 
-        int GetImageWidth(string filename)
+        double GetImageWidthInPoints(string filename)
         {
-            int width;
+            Unit width;
             using (XImage image2 = XImage.FromFile(filename))
             {
-                width = image2.PixelWidth;
+                width = Unit.FromPoint(image2.PixelWidth/ 1.54);
             }
             return width;
         }
@@ -267,7 +367,7 @@ namespace GitHubWikiToPDF
             if (!filename.EndsWith(".svg"))
             {
                 image = m_document.LastSection.LastParagraph.AddImage(filename);
-                int width = GetImageWidth(filename);
+                Unit width = Unit.FromPoint(GetImageWidthInPoints(filename));
                 image.LockAspectRatio = true;
                 image.Width = width;
             }
@@ -275,31 +375,29 @@ namespace GitHubWikiToPDF
 
         public void AddImage(string filename)
         {
+            CurrentParagraphType = ParagraphType.Image;
             MigraDoc.DocumentObjectModel.Shapes.Image image;
             if (!filename.EndsWith(".svg"))
             {
                 image = m_document.LastSection.AddParagraph("", StyleImage).AddImage(filename);
-                Unit maxWidth = "14cm";
-                Unit width = GetImageWidth(filename);
+                Unit maxWidth = Unit.FromCentimeter(14);
+                Unit width = Unit.FromPoint(GetImageWidthInPoints(filename));
                 image.LockAspectRatio = true;
-                image.Width = Math.Min(width.Centimeter, maxWidth.Centimeter) + "cm";
+                image.Width = Unit.FromCentimeter( Math.Min(width.Centimeter, maxWidth.Centimeter) );
             }
         }
 
-        int hyperLinkCount = 0;
         public void AddLinkToLastParagraph(string text, string link)
         {
-            hyperLinkCount++;
-            string hyperLinkName = "hyperlink-" + hyperLinkCount;
             Hyperlink hyperlink;
-            if (!link.StartsWith(".") && !link.StartsWith("http:"))
+            if (!link.StartsWith(".") && !link.StartsWith("http"))
             {
                 //reference to a document converted to section
                 hyperlink = m_document.LastSection.LastParagraph.AddHyperlink(link);
                 hyperlink.AddText(text);
                 //hyperlink.AddPageRefField(link);
             }
-            else if (link.StartsWith("http:"))
+            else if (link.StartsWith("http"))
             {
                 hyperlink = m_document.LastSection.LastParagraph.AddHyperlink(link, HyperlinkType.Url);
                 hyperlink.AddText(text);
@@ -309,22 +407,6 @@ namespace GitHubWikiToPDF
             {
                 Console.WriteLine("Warning: Relative path to a document outside the wiki (" + link + "). Convert it to an absolute Url");
                 m_document.LastSection.LastParagraph.AddText(text);
-            }
-        }
-
-        public void Save(string filename)
-        {
-            try
-            {
-                MigraDoc.DocumentObjectModel.IO.DdlWriter.WriteToFile(m_document, "MigraDoc.mdddl");
-                PdfDocumentRenderer renderer = new PdfDocumentRenderer(true);
-                renderer.Document = m_document;
-                renderer.RenderDocument();
-                renderer.PdfDocument.Save(filename);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("ERROR: " + e.ToString());
             }
         }
     }

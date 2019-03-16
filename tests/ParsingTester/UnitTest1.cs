@@ -50,7 +50,14 @@ namespace ParsingTester
             Assert.AreEqual("If you use our software in your research, we kindly ask you to reference ", splitParts[0]);
             Assert.AreEqual("[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2573299.svg)](https://doi.org/10.5281/zenodo.2573299)", splitParts[1]);
             Assert.AreEqual(".", splitParts[2]);
-
+            splitParts = converter.SplitByInlinePatterns("pLogger= CHILD_OBJECT<Logger>(pConfigNode, \"Log\", \"The logger class\");");
+            Assert.AreEqual(1, splitParts.Count);
+            splitParts = converter.SplitByInlinePatterns(" Every control step, after executing the action selected by the agent _a_, the agent will learn from the last experience tuple and also from _10_ randomly selected tuples from the buffer.");
+            Assert.AreEqual(5, splitParts.Count);
+            Assert.AreEqual("_a_", splitParts[1]);
+            Assert.AreEqual("_10_", splitParts[3]);
+            splitParts = converter.SplitByInlinePatterns("The class can be CHILD_OBJECT or CHILD_OBJECT_FACTORY.");
+            Assert.AreEqual(1, splitParts.Count);
         }
         [TestMethod]
         public void LinkParsing()
