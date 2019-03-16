@@ -69,6 +69,7 @@ namespace GitHubWikiToPDF
         {
             //Normal
             Style style = m_document.Styles["Normal"];
+            style.Font.Name = "CMU Serif";
             style.Font.Name = "Helvetica";
             style.ParagraphFormat.Alignment = ParagraphAlignment.Justify;
             style.ParagraphFormat.SpaceAfter = Unit.FromCentimeter(0.25);
@@ -115,8 +116,9 @@ namespace GitHubWikiToPDF
             style.Font.Italic = true;
 
             //Hyperlinks
+            Color HyperlinkColor = Color.FromRgb(81, 0, 121);
             style = m_document.Styles[StyleHyperlink];
-            style.Font.Color = Colors.BlueViolet;
+            style.Font.Color = HyperlinkColor;
 
             //Normal - level 1
             style = m_document.AddStyle(StyleNormal1, StyleNormal);
@@ -162,7 +164,7 @@ namespace GitHubWikiToPDF
             style.ParagraphFormat.Borders.Right.Visible = false;
 
             //Add our own styles needed for markdown files
-            Color codeBackground = new Color(236, 236, 236);
+            Color codeBackground = new Color(232, 214, 226);
             Color codeBorder = new Color(160, 160, 160);
 
             //Code
@@ -180,12 +182,15 @@ namespace GitHubWikiToPDF
             style.ParagraphFormat.RightIndent = Unit.FromCentimeter(0.5);
 
             //Inline code
+            Color InlineCodeColor = Color.FromRgb(98, 50, 74);
             style = m_document.Styles.AddStyle(StyleInlineCode, StyleCode);
-            style.Font.Color = Colors.DarkMagenta;
+            style.Font.Color = InlineCodeColor;
 
             //Note
+
             style = m_document.Styles.AddStyle(StyleNote, StyleCode);
             style.Font.Name = "Helvetica";
+            style.Font.Color = InlineCodeColor;
 
             style = m_document.Styles.AddStyle(StyleImage, StyleNormal);
             style.ParagraphFormat.SpaceBefore = "1cm";
@@ -262,7 +267,7 @@ namespace GitHubWikiToPDF
                 {
                     case 1: style = StyleNormal1; break;
                     case 2: style = StyleNormal2; break;
-                    default: style = StyleNormal; break;
+                    default: style = StyleNormal; CurrentParagraphType = ParagraphType.Normal; break;
                 }
                 m_document?.LastSection.AddParagraph("", style);
             }
@@ -320,12 +325,15 @@ namespace GitHubWikiToPDF
             return CurrentParagraphType == ParagraphType.Code;
         }
 
+        int m_lastSectionIndex = 0;
+
         public void AddTextToLastParagraph(string text, int numIndents= 0)
         {
             if (CurrentParagraphType == ParagraphType.Heading1)
             {
-                SetHeaderText(m_docTitle + ". " + text);
-                m_document?.LastSection.LastParagraph.AddText(text);
+                m_lastSectionIndex++;
+                SetHeaderText(m_docTitle + ": " + m_lastSectionIndex + ". " + text);
+                m_document?.LastSection.LastParagraph.AddText(m_lastSectionIndex + ". " + text);
             }
             else if (CurrentParagraphType == ParagraphType.Code)
             {

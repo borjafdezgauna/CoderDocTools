@@ -179,7 +179,7 @@ namespace GitHubWikiToPDF
         const string PatternInlineLink3 = @"\[\[[^\]\|]+\]\]"; //[[url]]
         const string PatternInlineBold1 = @"\*\*[^\*]+\*\*"; //**text** <- not sure this is standard or just my thing
         const string PatternInlineBold2 = @"\*[^\*]+\*"; //*text*
-        const string PatternInlineItalic = @"(?<!\w)_[\w\s_\-]+_(?!\w)";
+        const string PatternInlineItalic = @"(?<!\w)_[\w\s_\-\:]+_(?!\w)";
         const string PatternInlineCode = @"`[^`]+`"; // ` text `
         const string PatternAllInlines = "(" + PatterInlineLinkedImage + "|" + PatternInlineImage + "|" + PatternInlineBold1 + "|" + PatternInlineBold2 + "|" + PatternInlineCode 
             + "|" + PatternInlineItalic + "|" + PatternInlineLink1 + "|" + PatternInlineLink2 + "|" + PatternInlineLink3 + ")";

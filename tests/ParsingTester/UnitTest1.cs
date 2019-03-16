@@ -58,6 +58,12 @@ namespace ParsingTester
             Assert.AreEqual("_10_", splitParts[3]);
             splitParts = converter.SplitByInlinePatterns("The class can be CHILD_OBJECT or CHILD_OBJECT_FACTORY.");
             Assert.AreEqual(1, splitParts.Count);
+            splitParts = converter.SplitByInlinePatterns("I will please your request (_Note: I know what this is_) but beware");
+            Assert.AreEqual(3, splitParts.Count);
+            Assert.AreEqual("_Note: I know what this is_", splitParts[1]);
+            splitParts = converter.SplitByInlinePatterns("State variables in _s_ can be randomly initialized or reset to some initial state of the system.");
+            Assert.AreEqual(3, splitParts.Count);
+            Assert.AreEqual("_s_", splitParts[1]);
         }
         [TestMethod]
         public void LinkParsing()
