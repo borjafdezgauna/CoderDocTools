@@ -228,7 +228,7 @@ namespace GitHubWikiToPDF
             m_document.LastSection.AddParagraph(title, StyleCoverTitle);
             string date = DateTime.Now.Year + "/" + DateTime.Now.Month + "/" + DateTime.Now.Day;
             if (subtitle != null) m_document.LastSection.AddParagraph(subtitle, StyleCoverSubTitle);
-            if (author != null) m_document.LastSection.AddParagraph(author + "(" + date + ")", StyleCoverSubTitle);
+            if (author != null) m_document.LastSection.AddParagraph(author + " (" + date + ")", StyleCoverSubTitle);
         }
 
         void SetHeaderText(string header)

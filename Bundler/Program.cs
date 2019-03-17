@@ -21,7 +21,6 @@ namespace Portable_Badger
             outBaseFolder = ProjectName + "-" + version + @"/";
 
             files.Add(inBaseRelPath + ProjectName + ".exe");
-            files.Add(inBaseRelPath + @"style.css");
 
             List<string> dependencyList = new List<string>();
             GetDependencies(inBaseRelPath, ProjectName + ".exe", ref dependencyList);

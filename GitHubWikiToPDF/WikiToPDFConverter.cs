@@ -253,7 +253,7 @@ namespace GitHubWikiToPDF
             }
             
         }
-        string DocNameFromFilename(string htmlDocFilename)
+        public static string DocNameFromFilename(string htmlDocFilename)
         {
             string docName = Path.GetFileNameWithoutExtension(htmlDocFilename);
             docName = docName.Replace('-', ' ');
@@ -341,12 +341,7 @@ namespace GitHubWikiToPDF
         /// MigraDoc document
         /// </summary>
         WikiPDFDocument m_wikiPDFDocument;
-
-        public WikiToPDFConverter()
-        {
-
-        }
-
+        
         public void CreatePDFDocument(string title, string subtitle = "", string author = "", string subject= "")
         {
             m_wikiPDFDocument = new WikiPDFDocument(title, subtitle, author, subject);
