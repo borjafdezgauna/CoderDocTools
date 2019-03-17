@@ -32,6 +32,7 @@ namespace GitHubWikiToPDF
         const string outputFileArg = "-output-file=";
         static string outputFile = null;
 
+        static string projectDescription = null;
         static string tempFolder;
         static string markDownInputFolder;
 
@@ -46,11 +47,12 @@ namespace GitHubWikiToPDF
                 else if (arg.StartsWith(userNameArg)) userName = arg.Substring(userNameArg.Length);
                 else if (arg.StartsWith(inputFileArg)) inputFile = arg.Substring(inputFileArg.Length);
                 else if (arg.StartsWith(outputFileArg)) outputFile = arg.Substring(outputFileArg.Length);
-                else if (arg.StartsWith(authorNameArg)) authorName = arg.Substring(authorName.Length);
+                else if (arg.StartsWith(authorNameArg)) authorName = arg.Substring(authorNameArg.Length);
             }
 
             if (projectName != null && userName != null && outputFile != null)
             {
+                projectDescription = "https://github.com/" + userName + "/" + projectName; //
                 tempFolder = projectName;
                 markDownInputFolder = tempFolder;
                 inputFile = "Home.md";
@@ -100,7 +102,7 @@ namespace GitHubWikiToPDF
 
             WikiToPDFConverter markDownWikiToPDFConverter = new WikiToPDFConverter();
 
-            markDownWikiToPDFConverter.CreatePDFDocument(projectName, authorName, null);
+            markDownWikiToPDFConverter.CreatePDFDocument(projectName, projectDescription, authorName, "Created with GitHubWikiToPDF");
 
             markDownWikiToPDFConverter.Convert(markDownInputFolder, inputFile, tempFolder);
 

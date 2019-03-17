@@ -347,9 +347,9 @@ namespace GitHubWikiToPDF
 
         }
 
-        public void CreatePDFDocument(string title, string author = "", string subject= "")
+        public void CreatePDFDocument(string title, string subtitle = "", string author = "", string subject= "")
         {
-            m_wikiPDFDocument = new WikiPDFDocument(title, author, subject);
+            m_wikiPDFDocument = new WikiPDFDocument(title, subtitle, author, subject);
         }
 
         public void SavePDFDocument(string filename)

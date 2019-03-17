@@ -14,7 +14,7 @@ namespace GitHubWikiToPDF
         Document m_document;
         string m_docTitle;
 
-        public WikiPDFDocument(string title, string author, string subject)
+        public WikiPDFDocument(string title, string subtitle, string author, string subject)
         {
             // Create a new MigraDoc document
             m_document = new Document();
@@ -27,6 +27,8 @@ namespace GitHubWikiToPDF
 
             //Add style definitions to the document
             DefineStyles();
+
+            AddCoverPage(title, subtitle, author);
         }
 
         public void Save(string filename)
@@ -65,6 +67,8 @@ namespace GitHubWikiToPDF
         const string StyleInlineCode = "InlineCode";
         const string StyleImage = "Image";
         const string StyleHyperlink = StyleNames.Hyperlink;
+        const string StyleCoverTitle = "CoverTitle";
+        const string StyleCoverSubTitle = "CoverSubTitle";
 
         void DefineStyles()
         {
@@ -151,7 +155,6 @@ namespace GitHubWikiToPDF
             style.ParagraphFormat.LeftIndent = Unit.FromCentimeter(0.78);
             style.ParagraphFormat.FirstLineIndent = Unit.FromCentimeter(0);
 
-
             //Page Header
             style = m_document.Styles[StyleHeader];
             style.ParagraphFormat.AddTabStop("16cm", TabAlignment.Right);
@@ -197,10 +200,35 @@ namespace GitHubWikiToPDF
             style.Font.Name = "Helvetica";
             style.Font.Color = InlineCodeColor;
 
+            //Image
             style = m_document.Styles.AddStyle(StyleImage, StyleNormal);
             style.ParagraphFormat.SpaceBefore = "1cm";
             style.ParagraphFormat.SpaceAfter = "1cm";
             style.ParagraphFormat.Alignment = ParagraphAlignment.Center;
+
+            //Cover title
+            style = m_document.Styles.AddStyle(StyleCoverTitle,StyleNormal);
+            style.Font.Size = 42;
+            style.ParagraphFormat.Alignment = ParagraphAlignment.Left;
+            style.ParagraphFormat.Borders.Bottom.Color = Colors.DarkGray;
+            style.ParagraphFormat.Borders.Top.Visible = false;
+            style.ParagraphFormat.Borders.Left.Visible = false;
+            style.ParagraphFormat.Borders.Right.Visible = false;
+            style.ParagraphFormat.Borders.Width = 0.5;
+            style.ParagraphFormat.SpaceBefore = Unit.FromCentimeter(4);
+
+            //Cover subtitle
+            style = m_document.Styles.AddStyle(StyleCoverSubTitle, StyleNormal);
+            style.ParagraphFormat.SpaceBefore = Unit.FromCentimeter(0.4);
+        }
+
+        void AddCoverPage(string title, string subtitle, string author)
+        {
+            m_document.AddSection();
+            m_document.LastSection.AddParagraph(title, StyleCoverTitle);
+            string date = DateTime.Now.Year + "/" + DateTime.Now.Month + "/" + DateTime.Now.Day;
+            if (subtitle != null) m_document.LastSection.AddParagraph(subtitle, StyleCoverSubTitle);
+            if (author != null) m_document.LastSection.AddParagraph(author + "(" + date + ")", StyleCoverSubTitle);
         }
 
         void SetHeaderText(string header)
