@@ -294,7 +294,11 @@ namespace GitHubWikiToPDF
             {
                 m_openListLevel[m_numOpenLists] = level;
                 m_numOpenLists++;
-
+            }
+            else 
+            {
+                while (m_numOpenLists > 0 && level < m_openListLevel[m_numOpenLists - 1])
+                    m_numOpenLists--;
             }
 
             string style;
