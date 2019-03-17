@@ -55,6 +55,9 @@ namespace GitHubWikiToPDF
         const string StyleList1 = StyleNames.List + "1";
         const string StyleList2 = StyleNames.List + "2";
         const string StyleList3 = StyleNames.List + "3";
+        const string StyleParagraphInList1 = "ParagraphInList1";
+        const string StyleParagraphInList2 = "ParagraphInList2";
+        const string StyleParagraphInList3 = "ParagraphInList3";
         const string StyleHeader = StyleNames.Header;
         const string StyleFooter = StyleNames.Footer;
         const string StyleNote = "Note";
@@ -130,7 +133,21 @@ namespace GitHubWikiToPDF
 
             //List - level 3
             style = m_document.AddStyle(StyleList3, StyleList1);
-            style.ParagraphFormat.LeftIndent = Unit.FromCentimeter(1);
+            style.ParagraphFormat.LeftIndent = Unit.FromCentimeter(0.75);
+
+            //Paragraph in list item - level 1
+            style = m_document.AddStyle(StyleParagraphInList1, StyleList1);
+            style.ParagraphFormat.Alignment = ParagraphAlignment.Justify;
+            style.ParagraphFormat.LeftIndent = Unit.FromCentimeter(0.48);
+            //Paragraph in list item - level 2
+            style = m_document.AddStyle(StyleParagraphInList2, StyleList2);
+            style.ParagraphFormat.Alignment = ParagraphAlignment.Justify;
+            style.ParagraphFormat.LeftIndent = Unit.FromCentimeter(0.73);
+            //Paragraph in list item - level 3
+            style = m_document.AddStyle(StyleParagraphInList3, StyleList3);
+            style.ParagraphFormat.Alignment = ParagraphAlignment.Justify;
+            style.ParagraphFormat.LeftIndent = Unit.FromCentimeter(0.98);
+
 
             //Page Header
             style = m_document.Styles[StyleHeader];
@@ -170,6 +187,7 @@ namespace GitHubWikiToPDF
             Color InlineCodeColor = Color.FromRgb(98, 50, 74);
             style = m_document.Styles.AddStyle(StyleInlineCode, StyleCode);
             style.Font.Color = InlineCodeColor;
+            style.Font.Name = "CMU Serif";
 
             //Note
             style = m_document.Styles.AddStyle(StyleNote, StyleCode);
@@ -251,9 +269,9 @@ namespace GitHubWikiToPDF
                 {
                     switch (m_numOpenLists)
                     {
-                        case 1: style = StyleList1; break;
-                        case 2: style = StyleList2; break;
-                        case 3: style = StyleList3; break;
+                        case 1: style = StyleParagraphInList1; break;
+                        case 2: style = StyleParagraphInList2; break;
+                        case 3: style = StyleParagraphInList3; break;
                         default: style = StyleNormal; CurrentParagraphType = ParagraphType.Normal; break;
                     }
                 }
@@ -284,8 +302,8 @@ namespace GitHubWikiToPDF
             switch (m_numOpenLists)
             {
                 case 1: style = StyleList1; bullet = "- "; break;
-                case 2: style = StyleList2; bullet = "* "; break;
-                default: style = StyleList3; bullet = "- "; break;
+                case 2: style = StyleList2; bullet = "- "; break;
+                default: style = StyleList3; bullet = "* "; break;
             }
             Paragraph paragraph= m_document?.LastSection.AddParagraph(bullet, style);
         }
