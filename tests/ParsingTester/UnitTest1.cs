@@ -64,6 +64,10 @@ namespace ParsingTester
             splitParts = converter.SplitByInlinePatterns("State variables in _s_ can be randomly initialized or reset to some initial state of the system.");
             Assert.AreEqual(3, splitParts.Count);
             Assert.AreEqual("_s_", splitParts[1]);
+            splitParts = converter.SplitByInlinePatterns("the experiment off-line (_Right-click->View experiment_) or the value functions learned by the agents(_Right - click->View functions_).");
+            Assert.AreEqual(5, splitParts.Count);
+            Assert.AreEqual("_Right-click->View experiment_", splitParts[1]);
+            Assert.AreEqual("_Right - click->View functions_", splitParts[3]);
         }
         [TestMethod]
         public void LinkParsing()

@@ -177,9 +177,9 @@ namespace GitHubWikiToPDF
         const string PatternInlineLink1 = @"\[\[[^\]]+\|[^\]]+\]\]"; //[[text|url]]
         const string PatternInlineLink2 = @"\[[^\]]+\]\([^\)]+\)"; //[text](url)
         const string PatternInlineLink3 = @"\[\[[^\]\|]+\]\]"; //[[url]]
-        const string PatternInlineBold1 = @"\*\*[^\*]+\*\*"; //**text** <- not sure this is standard or just my thing
-        const string PatternInlineBold2 = @"\*[^\*]+\*"; //*text*
-        const string PatternInlineItalic = @"(?<!\w)_[\w\s_\-\:]+_(?!\w)";
+        const string PatternInlineBold1 = @"\*\*[^\*]+\*\*"; //**bold text** <- not sure this is standard or just my thing
+        const string PatternInlineBold2 = @"\*[^\*]+\*"; //*bold text*
+        const string PatternInlineItalic = @"(?<!\w)_.+?_(?!\w)"; // _italic text_
         const string PatternInlineCode = @"`[^`]+`"; // ` text `
         const string PatternAllInlines = "(" + PatterInlineLinkedImage + "|" + PatternInlineImage + "|" + PatternInlineBold1 + "|" + PatternInlineBold2 + "|" + PatternInlineCode 
             + "|" + PatternInlineItalic + "|" + PatternInlineLink1 + "|" + PatternInlineLink2 + "|" + PatternInlineLink3 + ")";
@@ -222,7 +222,7 @@ namespace GitHubWikiToPDF
             foreach (string part in splitParts)
             {
                 //Inline code
-                if (part.Length > 3)
+                if (part.Length >= 3)
                 {
                     if (part[0] == '`' && part[part.Length - 1] == '`')
                         m_wikiPDFDocument?.AddInlineCodeToLastParagraph(part.Substring(1, part.Length - 2));
