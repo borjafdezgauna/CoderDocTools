@@ -116,7 +116,7 @@ namespace GitHubWikiToPDF
             style.Font.Italic = true;
 
             //Hyperlinks
-            Color HyperlinkColor = Color.FromRgb(81, 0, 121);
+            Color HyperlinkColor = Color.FromRgb(8, 46, 233);
             style = m_document.Styles[StyleHyperlink];
             style.Font.Color = HyperlinkColor;
 
@@ -138,15 +138,18 @@ namespace GitHubWikiToPDF
             //Paragraph in list item - level 1
             style = m_document.AddStyle(StyleParagraphInList1, StyleList1);
             style.ParagraphFormat.Alignment = ParagraphAlignment.Justify;
-            style.ParagraphFormat.LeftIndent = Unit.FromCentimeter(0.48);
+            style.ParagraphFormat.LeftIndent = Unit.FromCentimeter(0.28);
+            style.ParagraphFormat.FirstLineIndent = Unit.FromCentimeter(0);
             //Paragraph in list item - level 2
             style = m_document.AddStyle(StyleParagraphInList2, StyleList2);
             style.ParagraphFormat.Alignment = ParagraphAlignment.Justify;
-            style.ParagraphFormat.LeftIndent = Unit.FromCentimeter(0.73);
+            style.ParagraphFormat.LeftIndent = Unit.FromCentimeter(0.53);
+            style.ParagraphFormat.FirstLineIndent = Unit.FromCentimeter(0);
             //Paragraph in list item - level 3
             style = m_document.AddStyle(StyleParagraphInList3, StyleList3);
             style.ParagraphFormat.Alignment = ParagraphAlignment.Justify;
-            style.ParagraphFormat.LeftIndent = Unit.FromCentimeter(0.98);
+            style.ParagraphFormat.LeftIndent = Unit.FromCentimeter(0.78);
+            style.ParagraphFormat.FirstLineIndent = Unit.FromCentimeter(0);
 
 
             //Page Header
@@ -166,7 +169,7 @@ namespace GitHubWikiToPDF
             style.ParagraphFormat.Borders.Right.Visible = false;
 
             //Add our own styles needed for markdown files
-            Color codeBackground = new Color(232, 214, 226);
+            Color codeBackground = new Color(226, 226, 226);
             Color codeBorder = new Color(160, 160, 160);
 
             //Code
@@ -184,7 +187,7 @@ namespace GitHubWikiToPDF
             style.ParagraphFormat.RightIndent = Unit.FromCentimeter(0.5);
 
             //Inline code
-            Color InlineCodeColor = Color.FromRgb(98, 50, 74);
+            Color InlineCodeColor = Color.FromRgb(153, 51, 153);
             style = m_document.Styles.AddStyle(StyleInlineCode, StyleCode);
             style.Font.Color = InlineCodeColor;
             style.Font.Name = "CMU Serif";
