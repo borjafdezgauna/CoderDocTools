@@ -75,10 +75,10 @@ namespace GitHubWikiToPDF
             if (!ParseArguments(args))
             {
                 Console.WriteLine("ERROR. Incorrect arguments.");
-                Console.WriteLine("Usage: GitHubWikiToPDF [-user=<github-user> -project=<github-project> | -input-file=<input-file (.md)]> -css=<css-file> -output-file=<output-file (.pdf)>");
+                Console.WriteLine("Usage: GitHubWikiToPDF [-user=<github-user> -project=<github-project> | -input-file=<input-file (.md)]> -output-file=<output-file (.pdf)>");
                 Console.WriteLine("Use examples:");
-                Console.WriteLine("\ta) Download and convert a GitHub wiki: GitHubWikiToPDF -user=simionsoft -project=SimionZoo -output-file=SimionZoo.pdf -css=style.css");
-                Console.WriteLine("\tb) Convert a local markdown file: GitHubWikiToPDF -input-file=../myLocalFile.md -output-file=myLocalFile.pdf -css=style.css");
+                Console.WriteLine("\ta) Download and convert a GitHub wiki: GitHubWikiToPDF -user=simionsoft -project=SimionZoo -output-file=SimionZoo.pdf");
+                Console.WriteLine("\tb) Convert a local markdown file: GitHubWikiToPDF -input-file=../myLocalFile.md -output-file=myLocalFile.pdf");
                 return;
             }
 
