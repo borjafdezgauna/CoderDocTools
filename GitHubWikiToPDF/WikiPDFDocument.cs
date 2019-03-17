@@ -336,14 +336,21 @@ namespace GitHubWikiToPDF
         }
 
         int m_lastSectionIndex = 0;
+        int m_lastSubSectionIndex = 0;
 
         public void AddTextToLastParagraph(string text, int numIndents= 0)
         {
             if (CurrentParagraphType == ParagraphType.Heading1)
             {
                 m_lastSectionIndex++;
-                SetHeaderText(m_docTitle + ": " + m_lastSectionIndex + ". " + text);
-                m_document?.LastSection.LastParagraph.AddText(m_lastSectionIndex + ". " + text);
+                m_lastSubSectionIndex = 0;
+                SetHeaderText(m_docTitle + ": " + m_lastSectionIndex + " " + text);
+                m_document?.LastSection.LastParagraph.AddText(m_lastSectionIndex + " " + text);
+            }
+            else if (CurrentParagraphType == ParagraphType.Heading2)
+            {
+                m_lastSubSectionIndex++;
+                m_document?.LastSection.LastParagraph.AddText(m_lastSectionIndex + "." + m_lastSubSectionIndex + " " + text);
             }
             else if (CurrentParagraphType == ParagraphType.Code)
             {
