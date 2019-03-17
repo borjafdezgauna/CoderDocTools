@@ -183,17 +183,17 @@ namespace GitHubWikiToPDF
             style.ParagraphFormat.Borders.Width = 0.5;
             style.ParagraphFormat.Borders.Distance = "3pt";
             style.ParagraphFormat.Borders.Color = codeBorder;
-            style.Font.Name = "Courier";
+            style.Font.Name = "Courier New";
             style.ParagraphFormat.Shading.Color = codeBackground;
             style.ParagraphFormat.Alignment = ParagraphAlignment.Left;
             style.ParagraphFormat.LeftIndent = Unit.FromCentimeter(0.5);
             style.ParagraphFormat.RightIndent = Unit.FromCentimeter(0.5);
 
             //Inline code
-            Color InlineCodeColor = Color.FromRgb(153, 51, 153);
+            Color InlineCodeColor = Colors.Black;// Color.FromRgb(60, 60, 60);
             style = m_document.Styles.AddStyle(StyleInlineCode, StyleCode);
             style.Font.Color = InlineCodeColor;
-            style.Font.Name = "CMU Serif";
+            style.Font.Name = "Courier New";
 
             //Note
             style = m_document.Styles.AddStyle(StyleNote, StyleCode);
