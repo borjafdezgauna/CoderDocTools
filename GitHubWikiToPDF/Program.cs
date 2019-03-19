@@ -43,11 +43,11 @@ namespace GitHubWikiToPDF
         {
             foreach(string arg in args)
             {
-                if (arg.StartsWith(projectNameArg)) projectName = arg.Substring(projectNameArg.Length);
-                else if (arg.StartsWith(userNameArg)) userName = arg.Substring(userNameArg.Length);
-                else if (arg.StartsWith(inputFileArg)) inputFile = arg.Substring(inputFileArg.Length);
-                else if (arg.StartsWith(outputFileArg)) outputFile = arg.Substring(outputFileArg.Length);
-                else if (arg.StartsWith(authorNameArg)) authorName = arg.Substring(authorNameArg.Length);
+                if (arg.StartsWith(projectNameArg)) projectName = arg.Substring(projectNameArg.Length).Trim('"');
+                else if (arg.StartsWith(userNameArg)) userName = arg.Substring(userNameArg.Length).Trim('"');
+                else if (arg.StartsWith(inputFileArg)) inputFile = arg.Substring(inputFileArg.Length).Trim('"');
+                else if (arg.StartsWith(outputFileArg)) outputFile = arg.Substring(outputFileArg.Length).Trim('"');
+                else if (arg.StartsWith(authorNameArg)) authorName = arg.Substring(authorNameArg.Length).Trim('"');
             }
 
             if (projectName != null && userName != null && outputFile != null)
@@ -101,14 +101,14 @@ namespace GitHubWikiToPDF
             //Convert it to PDF
             Console.WriteLine("\n#### 2. Converting markdown files to a single .pdf file");
 
-            WikiToPDFConverter markDownWikiToPDFConverter = new WikiToPDFConverter();
+            WikiToPDFConverter wikiToPDFConverter = new WikiToPDFConverter();
 
-            markDownWikiToPDFConverter.CreatePDFDocument(projectName, projectDescription, authorName, "Created with GitHubWikiToPDF");
+            wikiToPDFConverter.CreatePDFDocument(projectName, projectDescription, authorName, "Created with GitHubWikiToPDF");
 
-            markDownWikiToPDFConverter.Convert(markDownInputFolder, inputFile, tempFolder);
+            wikiToPDFConverter.Convert(markDownInputFolder, inputFile, tempFolder);
 
             if (!outputFile.EndsWith(".pdf")) outputFile += ".pdf";
-            markDownWikiToPDFConverter.SavePDFDocument(outputFile);
+            wikiToPDFConverter.SavePDFDocument(outputFile);
 
             if (File.Exists(outputFile))
                 Process.Start(outputFile);
