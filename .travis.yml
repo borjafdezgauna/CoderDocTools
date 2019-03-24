@@ -1,9 +1,6 @@
 language: csharp
 solution: GitHubWikiToPDF.sln
-
-mono:
-  - latest
 install:
-  - nuget restore GitHubWikiToPDF.sln
-  script:
-  - msbuild /p:Configuration=Release GitHubWikiToPDF.sln
+- nuget restore GitHubWikiToPDF.sln
+script:
+- msbuild /p:Configuration=Release GitHubWikiToPDF.sln
