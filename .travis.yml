@@ -2,8 +2,6 @@ language: csharp
 mono: none
 dotnet: 2.1.502
 solution: GitHubWikiToPDF.sln
-install:
-- nuget restore GitHubWikiToPDF.sln
 script:
 - dotnet restore
 - dotnet build
