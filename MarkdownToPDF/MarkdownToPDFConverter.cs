@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Net;
 using System.Threading.Tasks;
-
+using PdfSharp.Fonts;
 
 namespace MarkdownToPDF
 {
-    public class MardownToPDFConverter
+    public class WikiToPDFConverter
     {
         public List<string> ConvertedPages = new List<string>();
         public List<string> LinkedPages = new List<string>();
@@ -348,6 +348,7 @@ namespace MarkdownToPDF
         
         public void CreatePDFDocument(string title, string subtitle = "", string author = "", string subject= "")
         {
+            //GlobalFontSettings.FontResolver = new FontManager();
             m_wikiPDFDocument = new WikiPDFDocument(title, subtitle, author, subject);
         }
 

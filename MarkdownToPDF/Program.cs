@@ -53,7 +53,7 @@ namespace MarkdownToPDF
             }
             if (inputFile != null && outputFile != null)
             {
-                projectName = MardownToPDFConverter.DocNameFromFilename(inputFile);
+                projectName = WikiToPDFConverter.DocNameFromFilename(inputFile);
                 tempFolder = "tmp";
                 string inputDocName = Path.GetFileNameWithoutExtension(inputFile);
                 markDownInputFolder = Path.GetDirectoryName(inputFile);
@@ -93,7 +93,7 @@ namespace MarkdownToPDF
             //Convert it to PDF
             Console.WriteLine("\n#### 2. Converting markdown files to a single .pdf file");
 
-            MardownToPDFConverter markDownWikiToPDFConverter = new MardownToPDFConverter();
+            WikiToPDFConverter markDownWikiToPDFConverter = new WikiToPDFConverter();
 
             markDownWikiToPDFConverter.CreatePDFDocument(projectName, projectDescription, authorName, "Created with GitHubWikiToPDF");
 

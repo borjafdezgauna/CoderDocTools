@@ -183,20 +183,21 @@ namespace MarkdownToPDF
             style.ParagraphFormat.Borders.Width = 0.5;
             style.ParagraphFormat.Borders.Distance = "3pt";
             style.ParagraphFormat.Borders.Color = codeBorder;
-            style.Font.Name = "Courier New";
+            style.Font.Name = "Courier";
             style.ParagraphFormat.Shading.Color = codeBackground;
             style.ParagraphFormat.Alignment = ParagraphAlignment.Left;
             style.ParagraphFormat.LeftIndent = Unit.FromCentimeter(0.5);
             style.ParagraphFormat.RightIndent = Unit.FromCentimeter(0.5);
 
             //Inline code
-            Color InlineCodeColor = Color.FromRgb(50, 0, 50);
+            Color InlineCodeColor = Color.FromRgb(153, 51, 153);
             style = m_document.Styles.AddStyle(StyleInlineCode, StyleCode);
             style.Font.Color = InlineCodeColor;
+            style.Font.Name = "CMU Serif";
 
             //Note
             style = m_document.Styles.AddStyle(StyleNote, StyleCode);
-            style.Font.Name = "Courier New";
+            style.Font.Name = "Helvetica";
             style.Font.Color = InlineCodeColor;
 
             //Image
@@ -365,16 +366,16 @@ namespace MarkdownToPDF
         int m_lastSectionIndex = 0;
         int m_lastSubSectionIndex = 0;
 
-        public void AddTextToLastParagraph(string text, bool textStart, int numIndents= 0)
+        public void AddTextToLastParagraph(string text, bool isFirstPart= true, int numIndents= 0)
         {
-            if (textStart && CurrentParagraphType == ParagraphType.Heading1)
+            if (isFirstPart && CurrentParagraphType == ParagraphType.Heading1)
             {
                 m_lastSectionIndex++;
                 m_lastSubSectionIndex = 0;
                 SetHeaderText(m_docTitle + ": " + m_lastSectionIndex + " " + text);
                 m_document?.LastSection.LastParagraph.AddText(m_lastSectionIndex + " " + text);
             }
-            else if (textStart && CurrentParagraphType == ParagraphType.Heading2)
+            else if (isFirstPart && CurrentParagraphType == ParagraphType.Heading2)
             {
                 m_lastSubSectionIndex++;
                 m_document?.LastSection.LastParagraph.AddText(m_lastSectionIndex + "." + m_lastSubSectionIndex + " " + text);

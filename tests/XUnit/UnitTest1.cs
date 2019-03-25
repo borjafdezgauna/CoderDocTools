@@ -10,7 +10,7 @@ namespace XUnitTests
         [Fact]
         public void Test1()
         {
-            MardownToPDFConverter converter = new MardownToPDFConverter();
+            WikiToPDFConverter converter = new WikiToPDFConverter();
             List<string> splitParts;
             splitParts = converter.SplitByInlinePatterns("_Windows_: `Start->cmd (as Administrator) -> net start|stop herdagent`");
             Assert.Equal(3, splitParts.Count);
