@@ -95,7 +95,7 @@ namespace MarkdownToPDF
 
             WikiToPDFConverter markDownWikiToPDFConverter = new WikiToPDFConverter();
 
-            markDownWikiToPDFConverter.CreatePDFDocument(projectName, projectDescription, authorName, "Created with GitHubWikiToPDF");
+            markDownWikiToPDFConverter.CreatePDFDocument(projectName, projectDescription, authorName, "Created with MarkdownToPDF (https://github.com/borjafdezgauna/MarkdownToPDF/)");
 
             markDownWikiToPDFConverter.Convert(markDownInputFolder, inputFile, tempFolder);
 
