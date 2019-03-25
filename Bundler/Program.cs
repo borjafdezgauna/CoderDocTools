@@ -9,7 +9,7 @@ namespace Portable_Badger
 {
     class Program
     {
-        public const string ProjectName = "GitHubWikiToPDF";
+        public const string ProjectName = "MarkdownToPDF";
         public static string inBaseRelPath = @"../../../" + ProjectName + "/";
         public static string outBaseFolder;
         public static void Main()
@@ -17,13 +17,13 @@ namespace Portable_Badger
             List<string> files = new List<string>();
             string version;
 
-            version = GetVersion(inBaseRelPath + ProjectName + ".exe");
+            version = GetVersion(inBaseRelPath + "bin/Release/" + ProjectName + ".exe");
             outBaseFolder = ProjectName + "-" + version + @"/";
 
-            files.Add(inBaseRelPath + ProjectName + ".exe");
+            files.Add(inBaseRelPath + "bin/Release/" + ProjectName + ".exe");
 
             List<string> dependencyList = new List<string>();
-            GetDependencies(inBaseRelPath, ProjectName + ".exe", ref dependencyList);
+            GetDependencies(inBaseRelPath + "bin/Release/", ProjectName + ".exe", ref dependencyList);
             files.AddRange(dependencyList);
 
             string outputFile = inBaseRelPath + ProjectName + "-" + version + ".zip";

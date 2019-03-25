@@ -1,17 +1,20 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GitHubWikiToPDF;
+using NUnit.Framework;
+using MarkdownToPDF;
 using System.Collections.Generic;
 
-namespace ParsingTester
+namespace Tests
 {
-    [TestClass]
-    public class InlineParsingTester
+    public class Tests
     {
-        [TestMethod]
-        public void InlineSplitter()
+        [SetUp]
+        public void Setup()
         {
-            WikiToPDFConverter converter = new WikiToPDFConverter();
+        }
+
+        [Test]
+        public void ParsingTests()
+        {
+            MardownToPDFConverter converter = new MardownToPDFConverter();
             List<string> splitParts;
             splitParts = converter.SplitByInlinePatterns("_Windows_: `Start->cmd (as Administrator) -> net start|stop herdagent`");
             Assert.AreEqual(3, splitParts.Count);
@@ -69,12 +72,12 @@ namespace ParsingTester
             Assert.AreEqual("_Right-click->View experiment_", splitParts[1]);
             Assert.AreEqual("_Right - click->View functions_", splitParts[3]);
         }
-        [TestMethod]
-        public void LinkParsing()
+        [Test]
+        public void LinkedPagesTests()
         {
-            WikiToPDFConverter converter = new WikiToPDFConverter();
-            
-            converter.ParseInlineElements("1. Download the binaries[here](releases/latest).It includes both Windows and Linux binaries",0);
+            MardownToPDFConverter converter = new MardownToPDFConverter();
+
+            converter.ParseInlineElements("1. Download the binaries[here](releases/latest).It includes both Windows and Linux binaries", 0);
             Assert.AreEqual(1, converter.LinkedPages.Count);
             Assert.AreEqual("releases/latest.md", converter.LinkedPages[0]);
             converter.ParseInlineElements("1. Download the binaries[here](http://github.com).It includes both Windows and Linux binaries", 0);

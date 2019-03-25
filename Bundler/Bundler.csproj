@@ -51,11 +51,5 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\GitHubWikiToPDF\GitHubWikiToPDF.csproj">
-      <Project>{5ddf975f-05d6-47d5-83c4-dfc15e601530}</Project>
-      <Name>GitHubWikiToPDF</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

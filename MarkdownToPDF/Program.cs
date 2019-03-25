@@ -7,17 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using PdfSharp;
 using PdfSharp.Drawing;
-//using ExpertPdf.HtmlToPdf.PdfDocument;
-//using OpenHtmlToPdf;
-//using PdfSharp.Pdf;
-//using IronPdf;
-//using TheArtOfDev.HtmlRenderer.PdfSharp;
-//using iTextSharp;
-//using iTextSharp.text;
-//using iTextSharp.text;
 using PdfSharp.Pdf;
 
-namespace GitHubWikiToPDF
+namespace MarkdownToPDF
 {
     class Program
     {
@@ -61,7 +53,7 @@ namespace GitHubWikiToPDF
             }
             if (inputFile != null && outputFile != null)
             {
-                projectName = WikiToPDFConverter.DocNameFromFilename(inputFile);
+                projectName = MardownToPDFConverter.DocNameFromFilename(inputFile);
                 tempFolder = "tmp";
                 string inputDocName = Path.GetFileNameWithoutExtension(inputFile);
                 markDownInputFolder = Path.GetDirectoryName(inputFile);
@@ -101,7 +93,7 @@ namespace GitHubWikiToPDF
             //Convert it to PDF
             Console.WriteLine("\n#### 2. Converting markdown files to a single .pdf file");
 
-            WikiToPDFConverter markDownWikiToPDFConverter = new WikiToPDFConverter();
+            MardownToPDFConverter markDownWikiToPDFConverter = new MardownToPDFConverter();
 
             markDownWikiToPDFConverter.CreatePDFDocument(projectName, projectDescription, authorName, "Created with GitHubWikiToPDF");
 

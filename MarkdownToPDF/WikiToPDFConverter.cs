@@ -7,9 +7,9 @@ using System.Net;
 using System.Threading.Tasks;
 
 
-namespace GitHubWikiToPDF
+namespace MarkdownToPDF
 {
-    public class WikiToPDFConverter
+    public class MardownToPDFConverter
     {
         public List<string> ConvertedPages = new List<string>();
         public List<string> LinkedPages = new List<string>();
@@ -218,6 +218,8 @@ namespace GitHubWikiToPDF
         {
             if ( line == null || line.Length == 0 ) return;
 
+            bool isFirstPart = true;
+
             List<string> splitParts = SplitByInlinePatterns(line);
             foreach (string part in splitParts)
             {
@@ -246,10 +248,12 @@ namespace GitHubWikiToPDF
                         //image?
                         bool isImage = false;
                         if (part.StartsWith("![")) isImage= ParseImage(part);
-                        if (!isImage) m_wikiPDFDocument?.AddTextToLastParagraph(part);
+                        if (!isImage) m_wikiPDFDocument?.AddTextToLastParagraph(part, isFirstPart);
                     }
                 }
-                else m_wikiPDFDocument?.AddTextToLastParagraph(part);
+                else m_wikiPDFDocument?.AddTextToLastParagraph(part, isFirstPart);
+
+                isFirstPart = false;
             }
             
         }
@@ -301,7 +305,7 @@ namespace GitHubWikiToPDF
             }
 
             m_wikiPDFDocument.StartHeader(1, Path.GetFileNameWithoutExtension(markdownDocFilename));
-            m_wikiPDFDocument.AddTextToLastParagraph(DocNameFromFilename(localFilename));
+            m_wikiPDFDocument.AddTextToLastParagraph(DocNameFromFilename(localFilename), true);
 
             foreach (string line in lines)
             {
@@ -319,7 +323,7 @@ namespace GitHubWikiToPDF
                             ParseInlineElements(trimmedLine, numIndents);
                         else
                             //we add the line unparsed if there's a code block open
-                            m_wikiPDFDocument.AddTextToLastParagraph(line, numIndents);
+                            m_wikiPDFDocument.AddTextToLastParagraph(line, false, numIndents);
                     }
                 }
             }
