@@ -14,7 +14,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bundler", "Bundler\Bundler.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkdownToPDF", "MarkdownToPDF\MarkdownToPDF.csproj", "{5DDF975F-05D6-47D5-83C4-DFC15E601530}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XUnitTests", "tests\XUnit\XUnitTests.csproj", "{9ABDFBAF-0DC3-4B65-B245-B6749F551CFA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parsing", "tests\XUnit\Parsing.csproj", "{9ABDFBAF-0DC3-4B65-B245-B6749F551CFA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

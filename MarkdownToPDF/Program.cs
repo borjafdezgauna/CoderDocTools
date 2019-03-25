@@ -68,7 +68,7 @@ namespace MarkdownToPDF
             if (!ParseArguments(args))
             {
                 Console.WriteLine("ERROR. Incorrect arguments. Do not use spaces in any of the arguments");
-                Console.WriteLine("Usage: GitHubWikiToPDF [-user=<github-user> -project=<github-project> | -input-file=<input-file (.md)>] [author=<author>] -output-file=<output-file (.pdf)>");
+                Console.WriteLine("Usage: MarkdownToPDF [-user=<github-user> -project=<github-project> | -input-file=<input-file (.md)>] [author=<author>] -output-file=<output-file (.pdf)>");
                 Console.WriteLine("Use examples:");
                 Console.WriteLine("\ta) Download and convert a GitHub wiki: GitHubWikiToPDF -user=simionsoft -project=SimionZoo -author=SimionZoo -output-file=SimionZoo.pdf");
                 Console.WriteLine("\tb) Convert a local markdown file: GitHubWikiToPDF -input-file=../myLocalFile.md -author=SimionZoo -output-file=myLocalFile.pdf");
