@@ -348,7 +348,7 @@ namespace MarkdownToPDF
         
         public void CreatePDFDocument(string title, string subtitle = "", string author = "", string subject= "")
         {
-            //GlobalFontSettings.FontResolver = new FontManager();
+            GlobalFontSettings.FontResolver = new FontManager();
             m_wikiPDFDocument = new WikiPDFDocument(title, subtitle, author, subject);
         }
 

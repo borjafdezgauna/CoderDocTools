@@ -26,7 +26,7 @@ namespace MarkdownToPDF
             m_docTitle = title;
 
             //Add style definitions to the document
-            DefineStyles();
+            Styler.DefineStyles(m_document);
 
             AddCoverPage(title, subtitle, author);
         }
@@ -47,188 +47,17 @@ namespace MarkdownToPDF
             }
         }
 
-        const string StyleHeading1 = StyleNames.Heading1;
-        const string StyleHeading2 = StyleNames.Heading2;
-        const string StyleHeading3 = StyleNames.Heading3;
-        const string StyleHeading4 = StyleNames.Heading4;
-        const string StyleHeading5 = StyleNames.Heading5;
-        const string StyleNormal = StyleNames.Normal;
-        const string StyleLink = StyleNames.Hyperlink;
-        const string StyleList1 = StyleNames.List + "1";
-        const string StyleList2 = StyleNames.List + "2";
-        const string StyleList3 = StyleNames.List + "3";
-        const string StyleParagraphInList1 = "ParagraphInList1";
-        const string StyleParagraphInList2 = "ParagraphInList2";
-        const string StyleParagraphInList3 = "ParagraphInList3";
-        const string StyleHeader = StyleNames.Header;
-        const string StyleFooter = StyleNames.Footer;
-        const string StyleNote = "Note";
-        const string StyleCode = "Code";
-        const string StyleInlineCode = "InlineCode";
-        const string StyleImage = "Image";
-        const string StyleHyperlink = StyleNames.Hyperlink;
-        const string StyleCoverTitle = "CoverTitle";
-        const string StyleCoverSubTitle = "CoverSubTitle";
 
-        void DefineStyles()
-        {
-            //Normal
-            Style style = m_document.Styles["Normal"];
-            style.Font.Name = "CMU Serif";
-            style.ParagraphFormat.Alignment = ParagraphAlignment.Justify;
-            style.ParagraphFormat.SpaceAfter = Unit.FromCentimeter(0.25);
-            style.ParagraphFormat.SpaceBefore = Unit.FromCentimeter(0.25);
 
-            //Heading 1
-            style = m_document.Styles[StyleHeading1];
-            style.ParagraphFormat.Alignment = ParagraphAlignment.Left;
-            style.ParagraphFormat.SpaceAfter = Unit.FromCentimeter(0.5);
-            style.ParagraphFormat.SpaceBefore = Unit.FromCentimeter(0);
-            style.Font.Size = 20;
-            style.Font.Bold = true;
-            style.Font.Color = Colors.Black;
-            style.ParagraphFormat.PageBreakBefore = true;
-            style.ParagraphFormat.SpaceAfter = 6;
 
-            //Heading 2
-            style = m_document.Styles[StyleHeading2];
-            style.ParagraphFormat.SpaceAfter = Unit.FromCentimeter(0.4);
-            style.ParagraphFormat.SpaceBefore = Unit.FromCentimeter(0.5);
-            style.Font.Size = 16;
-            style.Font.Bold = true;
-            style.ParagraphFormat.PageBreakBefore = false;
-
-            //Heading 3
-            style = m_document.Styles[StyleHeading3];
-            style.ParagraphFormat.SpaceAfter = Unit.FromCentimeter(0.4);
-            style.ParagraphFormat.SpaceBefore = Unit.FromCentimeter(0.5);
-            style.Font.Size = 14;
-            style.Font.Bold = true;
-
-            //Heading 4
-            style = m_document.Styles[StyleHeading4];
-            style.Font.Size = 12;
-            style.Font.Bold = true;
-            style.Font.Italic = true;
-
-            //Heading 5
-            style = m_document.Styles[StyleHeading5];
-            style.ParagraphFormat.SpaceAfter = Unit.FromCentimeter(1);
-            style.ParagraphFormat.SpaceBefore = Unit.FromCentimeter(0.5);
-            style.Font.Size = 10;
-            style.Font.Bold = true;
-            style.Font.Italic = true;
-
-            //Hyperlinks
-            Color HyperlinkColor = Color.FromRgb(8, 46, 233);
-            style = m_document.Styles[StyleHyperlink];
-            style.Font.Color = HyperlinkColor;
-
-            //List - level 1
-            style = m_document.AddStyle(StyleList1, StyleNormal);
-            style.ParagraphFormat.Alignment = ParagraphAlignment.Justify;
-            style.ParagraphFormat.LeftIndent = Unit.FromCentimeter(0.25);
-            style.ParagraphFormat.FirstLineIndent = Unit.FromCentimeter(-0.2);
-            
-            //List - level 2
-            style = m_document.AddStyle(StyleList2, StyleList1);
-            style.ParagraphFormat.OutlineLevel = OutlineLevel.Level2;
-            style.ParagraphFormat.LeftIndent = Unit.FromCentimeter(0.5);
-
-            //List - level 3
-            style = m_document.AddStyle(StyleList3, StyleList1);
-            style.ParagraphFormat.LeftIndent = Unit.FromCentimeter(0.75);
-
-            //Paragraph in list item - level 1
-            style = m_document.AddStyle(StyleParagraphInList1, StyleList1);
-            style.ParagraphFormat.Alignment = ParagraphAlignment.Justify;
-            style.ParagraphFormat.LeftIndent = Unit.FromCentimeter(0.28);
-            style.ParagraphFormat.FirstLineIndent = Unit.FromCentimeter(0);
-            //Paragraph in list item - level 2
-            style = m_document.AddStyle(StyleParagraphInList2, StyleList2);
-            style.ParagraphFormat.Alignment = ParagraphAlignment.Justify;
-            style.ParagraphFormat.LeftIndent = Unit.FromCentimeter(0.53);
-            style.ParagraphFormat.FirstLineIndent = Unit.FromCentimeter(0);
-            //Paragraph in list item - level 3
-            style = m_document.AddStyle(StyleParagraphInList3, StyleList3);
-            style.ParagraphFormat.Alignment = ParagraphAlignment.Justify;
-            style.ParagraphFormat.LeftIndent = Unit.FromCentimeter(0.78);
-            style.ParagraphFormat.FirstLineIndent = Unit.FromCentimeter(0);
-
-            //Page Header
-            style = m_document.Styles[StyleHeader];
-            style.ParagraphFormat.AddTabStop("16cm", TabAlignment.Right);
-            style.ParagraphFormat.Borders.Bottom.Color = Colors.DarkGray;
-            style.ParagraphFormat.Borders.Top.Visible = false;
-            style.ParagraphFormat.Borders.Left.Visible = false;
-            style.ParagraphFormat.Borders.Right.Visible = false;
-            style.ParagraphFormat.Borders.Width = 0.5;
-            //Page Footer
-            style = m_document.Styles[StyleFooter];
-            style.ParagraphFormat.AddTabStop("8cm", TabAlignment.Center);
-            style.ParagraphFormat.Borders.Top.Color = Colors.DarkGray;
-            style.ParagraphFormat.Borders.Bottom.Visible = false;
-            style.ParagraphFormat.Borders.Left.Visible = false;
-            style.ParagraphFormat.Borders.Right.Visible = false;
-
-            //Add our own styles needed for markdown files
-            Color codeBackground = new Color(226, 226, 226);
-            Color codeBorder = new Color(160, 160, 160);
-
-            //Code
-            style = m_document.Styles.AddStyle(StyleCode, StyleNormal);
-            style.Font.Color = Colors.Black;
-            style.ParagraphFormat.SpaceBefore = "0.5cm";
-            style.ParagraphFormat.SpaceAfter = "0.5cm";
-            style.ParagraphFormat.Borders.Width = 0.5;
-            style.ParagraphFormat.Borders.Distance = "3pt";
-            style.ParagraphFormat.Borders.Color = codeBorder;
-            style.Font.Name = "Courier";
-            style.ParagraphFormat.Shading.Color = codeBackground;
-            style.ParagraphFormat.Alignment = ParagraphAlignment.Left;
-            style.ParagraphFormat.LeftIndent = Unit.FromCentimeter(0.5);
-            style.ParagraphFormat.RightIndent = Unit.FromCentimeter(0.5);
-
-            //Inline code
-            Color InlineCodeColor = Color.FromRgb(153, 51, 153);
-            style = m_document.Styles.AddStyle(StyleInlineCode, StyleCode);
-            style.Font.Color = InlineCodeColor;
-            style.Font.Name = "CMU Serif";
-
-            //Note
-            style = m_document.Styles.AddStyle(StyleNote, StyleCode);
-            style.Font.Name = "Helvetica";
-            style.Font.Color = InlineCodeColor;
-
-            //Image
-            style = m_document.Styles.AddStyle(StyleImage, StyleNormal);
-            style.ParagraphFormat.SpaceBefore = "1cm";
-            style.ParagraphFormat.SpaceAfter = "1cm";
-            style.ParagraphFormat.Alignment = ParagraphAlignment.Center;
-
-            //Cover title
-            style = m_document.Styles.AddStyle(StyleCoverTitle,StyleNormal);
-            style.Font.Size = 42;
-            style.ParagraphFormat.Alignment = ParagraphAlignment.Left;
-            style.ParagraphFormat.Borders.Bottom.Color = Colors.DarkGray;
-            style.ParagraphFormat.Borders.Top.Visible = false;
-            style.ParagraphFormat.Borders.Left.Visible = false;
-            style.ParagraphFormat.Borders.Right.Visible = false;
-            style.ParagraphFormat.Borders.Width = 0.5;
-            style.ParagraphFormat.SpaceBefore = Unit.FromCentimeter(4);
-
-            //Cover subtitle
-            style = m_document.Styles.AddStyle(StyleCoverSubTitle, StyleNormal);
-            style.ParagraphFormat.SpaceBefore = Unit.FromCentimeter(0.4);
-        }
 
         void AddCoverPage(string title, string subtitle, string author)
         {
             m_document.AddSection();
-            m_document.LastSection.AddParagraph(title, StyleCoverTitle);
+            m_document.LastSection.AddParagraph(title, Styler.StyleCoverTitle);
             string date = DateTime.Now.Year + "/" + DateTime.Now.Month + "/" + DateTime.Now.Day;
-            if (subtitle != null) m_document.LastSection.AddParagraph(subtitle, StyleCoverSubTitle);
-            if (author != null) m_document.LastSection.AddParagraph(author + " (" + date + ")", StyleCoverSubTitle);
+            if (subtitle != null) m_document.LastSection.AddParagraph(subtitle, Styler.StyleCoverSubTitle);
+            if (author != null) m_document.LastSection.AddParagraph(author + " (" + date + ")", Styler.StyleCoverSubTitle);
         }
 
         void SetHeaderText(string header)
@@ -295,15 +124,15 @@ namespace MarkdownToPDF
             if (CurrentParagraphType != ParagraphType.Code)
             {
                 string style;
-                if (numIndents == 0 || m_numOpenLists == 0) { style = StyleNormal; CurrentParagraphType = ParagraphType.Normal; }
+                if (numIndents == 0 || m_numOpenLists == 0) { style = Styler.StyleNormal; CurrentParagraphType = ParagraphType.Normal; }
                 else
                 {
                     switch (m_numOpenLists)
                     {
-                        case 1: style = StyleParagraphInList1; break;
-                        case 2: style = StyleParagraphInList2; break;
-                        case 3: style = StyleParagraphInList3; break;
-                        default: style = StyleNormal; CurrentParagraphType = ParagraphType.Normal; break;
+                        case 1: style = Styler.StyleParagraphInList1; break;
+                        case 2: style = Styler.StyleParagraphInList2; break;
+                        case 3: style = Styler.StyleParagraphInList3; break;
+                        default: style = Styler.StyleNormal; CurrentParagraphType = ParagraphType.Normal; break;
                     }
                 }
                 m_document?.LastSection.AddParagraph("", style);
@@ -336,9 +165,9 @@ namespace MarkdownToPDF
             string bullet;
             switch (m_numOpenLists)
             {
-                case 1: style = StyleList1; bullet = "- "; break;
-                case 2: style = StyleList2; bullet = "- "; break;
-                default: style = StyleList3; bullet = "* "; break;
+                case 1: style = Styler.StyleList1; bullet = "- "; break;
+                case 2: style = Styler.StyleList2; bullet = "- "; break;
+                default: style = Styler.StyleList3; bullet = "* "; break;
             }
             Paragraph paragraph= m_document?.LastSection.AddParagraph(bullet, style);
         }
@@ -346,7 +175,7 @@ namespace MarkdownToPDF
         public void StartNote(int level)
         {
             CurrentParagraphType = ParagraphType.Note;
-            m_document?.LastSection.AddParagraph("", StyleNote);
+            m_document?.LastSection.AddParagraph("", Styler.StyleNote);
         }
 
         public void ToggleCodeBlock(int level)
@@ -354,7 +183,7 @@ namespace MarkdownToPDF
             if (CurrentParagraphType != ParagraphType.Code)
             {
                 CurrentParagraphType = ParagraphType.Code;
-                m_document?.LastSection.AddParagraph("", StyleCode);
+                m_document?.LastSection.AddParagraph("", Styler.StyleCode);
             }
             else CurrentParagraphType = ParagraphType.Normal;
         }
@@ -401,7 +230,7 @@ namespace MarkdownToPDF
 
         public void AddInlineCodeToLastParagraph(string text)
         {
-            m_document?.LastSection.LastParagraph.AddFormattedText(text, StyleInlineCode);
+            m_document?.LastSection.LastParagraph.AddFormattedText(text, Styler.StyleInlineCode);
         }
 
         double GetImageWidthInPoints(string filename)
@@ -432,7 +261,7 @@ namespace MarkdownToPDF
             MigraDoc.DocumentObjectModel.Shapes.Image image;
             if (!filename.EndsWith(".svg"))
             {
-                image = m_document.LastSection.AddParagraph("", StyleImage).AddImage(filename);
+                image = m_document.LastSection.AddParagraph("", Styler.StyleImage).AddImage(filename);
                 Unit maxWidth = Unit.FromCentimeter(14);
                 Unit width = Unit.FromPoint(GetImageWidthInPoints(filename));
                 image.LockAspectRatio = true;

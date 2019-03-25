@@ -10,21 +10,25 @@ namespace Portable_Badger
     class Program
     {
         public const string ProjectName = "MarkdownToPDF";
-        public static string inBaseRelPath = @"../../../" + ProjectName + "/";
+        public static string inBaseRelPath = @"../../../";
         public static string outBaseFolder;
         public static void Main()
         {
             List<string> files = new List<string>();
             string version;
 
-            version = GetVersion(inBaseRelPath + "bin/Release/" + ProjectName + ".exe");
+            version = GetVersion(inBaseRelPath + "bin/" + ProjectName + ".exe");
             outBaseFolder = ProjectName + "-" + version + @"/";
 
-            files.Add(inBaseRelPath + "bin/Release/" + ProjectName + ".exe");
+            files.Add(inBaseRelPath + "bin/" + ProjectName + ".exe");
 
             List<string> dependencyList = new List<string>();
-            GetDependencies(inBaseRelPath + "bin/Release/", ProjectName + ".exe", ref dependencyList);
+            GetDependencies(inBaseRelPath + "bin/", ProjectName + ".exe", ref dependencyList);
             files.AddRange(dependencyList);
+
+            //add font files in /fonts
+            files.Add(inBaseRelPath + "fonts/regular.ttf");
+            files.Add(inBaseRelPath + "fonts/code.ttf");
 
             string outputFile = inBaseRelPath + ProjectName + "-" + version + ".zip";
 
