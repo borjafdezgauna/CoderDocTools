@@ -14,7 +14,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bundler", "Bundler\Bundler.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkdownToPDF", "MarkdownToPDF\MarkdownToPDF.csproj", "{5DDF975F-05D6-47D5-83C4-DFC15E601530}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParsingTests", "tests\ParsingTests\ParsingTests.csproj", "{31A1889E-FE2F-4B77-9CC8-0CE4E68BA0B4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XUnitTests", "tests\XUnit\XUnitTests.csproj", "{9ABDFBAF-0DC3-4B65-B245-B6749F551CFA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,16 +30,16 @@ Global
 		{5DDF975F-05D6-47D5-83C4-DFC15E601530}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5DDF975F-05D6-47D5-83C4-DFC15E601530}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5DDF975F-05D6-47D5-83C4-DFC15E601530}.Release|Any CPU.Build.0 = Release|Any CPU
-		{31A1889E-FE2F-4B77-9CC8-0CE4E68BA0B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{31A1889E-FE2F-4B77-9CC8-0CE4E68BA0B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{31A1889E-FE2F-4B77-9CC8-0CE4E68BA0B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{31A1889E-FE2F-4B77-9CC8-0CE4E68BA0B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9ABDFBAF-0DC3-4B65-B245-B6749F551CFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ABDFBAF-0DC3-4B65-B245-B6749F551CFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9ABDFBAF-0DC3-4B65-B245-B6749F551CFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9ABDFBAF-0DC3-4B65-B245-B6749F551CFA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{31A1889E-FE2F-4B77-9CC8-0CE4E68BA0B4} = {8927A44E-FE58-4BF2-9FB6-222C297C043C}
+		{9ABDFBAF-0DC3-4B65-B245-B6749F551CFA} = {8927A44E-FE58-4BF2-9FB6-222C297C043C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {769A963A-E385-4445-842F-11E7A2D37287}
