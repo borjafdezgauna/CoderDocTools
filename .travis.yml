@@ -1,7 +1,7 @@
 language: csharp
 solution: GitHubWikiToPDF.sln
 mono:
-- install
+- latest
 install:
 - nuget restore GitHubWikiToPDF.sln
 - nuget install xunit.runner.console -Version 1.9.2 -OutputDirectory testrunner
