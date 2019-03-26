@@ -4,7 +4,7 @@ mono:
 - latest
 install:
 - nuget restore GitHubWikiToPDF.sln
-- nuget install xunit.runner.console -Version 1.9.2 -OutputDirectory testrunner
+- nuget install xunit.runner.console -Version 2.1.0 -OutputDirectory testrunner
 script:
 - msbuild /p:Configuration=Release GitHubWikiToPDF.sln
-- mono ./testrunner/xunit.runners.1.9.2/tools/xunit.runner.console.clr4.exe ./tests/XUnit/bin/Release/netcoreapp2.1/Parsing.dll
+- mono ./testrunner/xunit.runner.console.2.1.0/tools/xunit.console.exe ./tests/XUnit/bin/Release/netcoreapp2.1/Parsing.dll
