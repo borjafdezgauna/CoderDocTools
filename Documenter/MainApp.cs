@@ -8,8 +8,8 @@ namespace SimionSrcParser
     class MainApp
     {
         const string argSourcePrefix = "lang=";
-        const string argSourceDirPrefix = "source-dir=";
-        const string argOutDirPrefix = "out-dir=";
+        const string argSourceDirPrefix = "input-dir=";
+        const string argOutDirPrefix = "output-dir=";
 
         static string sourcesLanguage = "cpp"; //default value
         static List<string> sourceDirectories = new List<string>();
@@ -21,9 +21,9 @@ namespace SimionSrcParser
             //lang=[cpp|csharp] source-dir=<dir> [out-docs=<path-to-md>]
             foreach (string arg in args)
             {
-                if (arg.StartsWith(argSourcePrefix)) sourcesLanguage = arg.Substring(argSourcePrefix.Length);
-                else if (arg.StartsWith(argSourceDirPrefix)) sourceDirectories.Add(arg.Substring(argSourceDirPrefix.Length));
-                else if (arg.StartsWith(argOutDirPrefix)) outputDocsFolder = arg.Substring(argOutDirPrefix.Length);
+                if (arg.StartsWith(argSourcePrefix)) sourcesLanguage = arg.Substring(argSourcePrefix.Length).Trim('"');
+                else if (arg.StartsWith(argSourceDirPrefix)) sourceDirectories.Add(arg.Substring(argSourceDirPrefix.Length).Trim('"'));
+                else if (arg.StartsWith(argOutDirPrefix)) outputDocsFolder = arg.Substring(argOutDirPrefix.Length).Trim('"');
             }
             if (sourceDirectories.Count == 0 || outputDocsFolder == null)
                 return false;   //all required arguments were not provided
@@ -37,7 +37,7 @@ namespace SimionSrcParser
 
             if (!ParseArguments(args))
             {
-                Console.WriteLine("ERROR. Usage: Documenter lang=[cpp|csharp] source-dir=<dir> [out-dir=<path-to-md>]");
+                Console.WriteLine("ERROR. Usage: Documenter lang=<cpp|csharp> input-dir=<dir> [output-dir=<dir>]");
                 return 0;
             }
 

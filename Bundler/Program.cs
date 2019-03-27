@@ -21,7 +21,7 @@ namespace Portable_Badger
             string version;
 
             version = GetVersion(inBaseRelPath + "bin/" + Project1 + ".exe");
-            outBaseFolder = Project1 + "-" + version + @"/";
+            outBaseFolder = productName + "-" + version + @"/";
 
             files.Add(inBaseRelPath + "bin/" + Project1 + ".exe");
             files.Add(inBaseRelPath + "bin/" + Project2 + ".exe");

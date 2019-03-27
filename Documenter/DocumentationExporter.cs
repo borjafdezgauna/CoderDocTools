@@ -51,9 +51,8 @@ namespace SimionSrcParser
 
             classes = classes.OrderBy(x => x.Name).ToList();
 
-            if (Directory.Exists(outputDir))
-                Directory.Delete(outputDir, true);
-            Directory.CreateDirectory(outputDir);
+            if (!Directory.Exists(outputDir))
+                Directory.CreateDirectory(outputDir);
 
             using (StreamWriter indexWriter = File.CreateText(outputIndexFile))
             {

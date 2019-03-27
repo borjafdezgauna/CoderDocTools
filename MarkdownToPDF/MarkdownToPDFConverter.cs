@@ -304,6 +304,8 @@ namespace MarkdownToPDF
                 return;
             }
 
+            Console.WriteLine("Converting file: " + markdownDocFilename);
+
             m_wikiPDFDocument.StartHeader(1, Path.GetFileNameWithoutExtension(markdownDocFilename));
             m_wikiPDFDocument.AddTextToLastParagraph(DocNameFromFilename(localFilename), true);
 

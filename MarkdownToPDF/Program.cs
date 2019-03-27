@@ -13,15 +13,15 @@ namespace MarkdownToPDF
 {
     class Program
     {
-        const string userNameArg = "-user=";
+        const string userNameArg = "user=";
         static string userName = null;
-        const string projectNameArg = "-project=";
+        const string projectNameArg = "project=";
         static string projectName = null;
-        const string authorNameArg = "-author=";
+        const string authorNameArg = "author=";
         static string authorName = null;
-        const string inputFileArg = "-input-file=";
+        const string inputFileArg = "input-file=";
         static string inputFile= null;
-        const string outputFileArg = "-output-file=";
+        const string outputFileArg = "output-file=";
         static string outputFile = null;
 
         static string projectDescription = null;
@@ -35,16 +35,16 @@ namespace MarkdownToPDF
         {
             foreach(string arg in args)
             {
-                if (arg.StartsWith(projectNameArg)) projectName = arg.Substring(projectNameArg.Length);
-                else if (arg.StartsWith(userNameArg)) userName = arg.Substring(userNameArg.Length);
-                else if (arg.StartsWith(inputFileArg)) inputFile = arg.Substring(inputFileArg.Length);
-                else if (arg.StartsWith(outputFileArg)) outputFile = arg.Substring(outputFileArg.Length);
-                else if (arg.StartsWith(authorNameArg)) authorName = arg.Substring(authorNameArg.Length);
+                if (arg.StartsWith(projectNameArg)) projectName = arg.Substring(projectNameArg.Length).Trim('"');
+                else if (arg.StartsWith(userNameArg)) userName = arg.Substring(userNameArg.Length).Trim('"');
+                else if (arg.StartsWith(inputFileArg)) inputFile = arg.Substring(inputFileArg.Length).Trim('"');
+                else if (arg.StartsWith(outputFileArg)) outputFile = arg.Substring(outputFileArg.Length).Trim('"');
+                else if (arg.StartsWith(authorNameArg)) authorName = arg.Substring(authorNameArg.Length).Trim('"');
             }
 
             if (projectName != null && userName != null && outputFile != null)
             {
-                projectDescription = "https://github.com/" + userName + "/" + projectName; //
+                projectDescription = "Generated with CodeDocTools (https://github.com/borjafdezgauna/CoderDocTools)"; //
                 tempFolder = projectName;
                 markDownInputFolder = tempFolder;
                 inputFile = "Home.md";
@@ -53,7 +53,9 @@ namespace MarkdownToPDF
             }
             if (inputFile != null && outputFile != null)
             {
-                projectName = WikiToPDFConverter.DocNameFromFilename(inputFile);
+                if (projectName == null)
+                    projectName = WikiToPDFConverter.DocNameFromFilename(inputFile);
+                projectDescription = "Generated with CodeDocTools (https://github.com/borjafdezgauna/CoderDocTools)";
                 tempFolder = "tmp";
                 string inputDocName = Path.GetFileNameWithoutExtension(inputFile);
                 markDownInputFolder = Path.GetDirectoryName(inputFile);
@@ -68,10 +70,10 @@ namespace MarkdownToPDF
             if (!ParseArguments(args))
             {
                 Console.WriteLine("ERROR. Incorrect arguments. Do not use spaces in any of the arguments");
-                Console.WriteLine("Usage: MarkdownToPDF [-user=<github-user> -project=<github-project> | -input-file=<input-file (.md)>] [author=<author>] -output-file=<output-file (.pdf)>");
+                Console.WriteLine("Usage: MarkdownToPDF [user=<github-user> project=<github-project> | input-file=<input-file (.md)>] [author=<author>] output-file=<output-file (.pdf)>");
                 Console.WriteLine("Use examples:");
-                Console.WriteLine("\ta) Download and convert a GitHub wiki: GitHubWikiToPDF -user=simionsoft -project=SimionZoo -author=SimionZoo -output-file=SimionZoo.pdf");
-                Console.WriteLine("\tb) Convert a local markdown file: GitHubWikiToPDF -input-file=../myLocalFile.md -author=SimionZoo -output-file=myLocalFile.pdf");
+                Console.WriteLine("\ta) Download and convert a GitHub wiki: GitHubWikiToPDF user=simionsoft project=SimionZoo author=SimionZoo output-file=SimionZoo.pdf");
+                Console.WriteLine("\tb) Convert a local markdown file: GitHubWikiToPDF input-file=../myLocalFile.md author=SimionZoo output-file=myLocalFile.pdf");
                 return;
             }
 
@@ -103,7 +105,8 @@ namespace MarkdownToPDF
             markDownWikiToPDFConverter.SavePDFDocument(outputFile);
 
             if (File.Exists(outputFile))
-                Process.Start(outputFile);
+                Console.WriteLine("Successfully created documentation file as PDF: " + outputFile);
+            else Console.WriteLine("ERROR: Something went wrong trying to save the PDF file");
         }
     }
 }

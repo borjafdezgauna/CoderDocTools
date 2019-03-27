@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,11 +13,18 @@ namespace MarkdownToPDF
         public const string RegularFont = "Regular";
         public const string CodeFont = "Code";
 
-        Dictionary<string, string> FontFiles = new Dictionary<string, string>()
-        { {RegularFont, "../fonts/regular.ttf" } , {CodeFont, "../fonts/code.ttf" } };
+        Dictionary<string, string> FontFiles = new Dictionary<string, string>();
+
+        string binFolder;
 
         public FontManager()
-        { }
+        {
+            binFolder= Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
+
+
+            FontFiles[RegularFont] = binFolder + "/../fonts/regular.ttf";
+            FontFiles[CodeFont]= binFolder + "/../fonts/code.ttf";
+        }
 
         public FontResolverInfo ResolveTypeface(string familyName, bool isBold, bool isItalic)
         {

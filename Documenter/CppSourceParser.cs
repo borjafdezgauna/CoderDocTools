@@ -83,6 +83,7 @@ namespace SimionSrcParser
                 , SearchOption.AllDirectories));
             foreach (var file in sourceFiles)
             {
+                Console.WriteLine("Parsing source file: " + file);
                 ParseSrcFile(file);
             }
         }
