@@ -1,5 +1,5 @@
-![Master build](https://travis-ci.com/borjafdezgauna/GitHubWikiToPDF.svg?branch=master)
-![Develop build](https://travis-ci.com/borjafdezgauna/GitHubWikiToPDF.svg?branch=develop)
+Master branch: ![Build status](https://travis-ci.com/borjafdezgauna/GitHubWikiToPDF.svg?branch=master)
+Develop branch: ![Build status](https://travis-ci.com/borjafdezgauna/GitHubWikiToPDF.svg?branch=develop)
 
 # About this project
 This is a simple C# program that downloads a wiki from GitHub and converts it to a PDF file with all the content of the wiki. I wrote it because I found no satisfactory way to download/convert referenced pages and create a single PDF in one single step. This tool does.
