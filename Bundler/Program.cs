@@ -9,7 +9,10 @@ namespace Portable_Badger
 {
     class Program
     {
-        public const string ProjectName = "MarkdownToPDF";
+        public const string productName = "CoderDocTools";
+
+        public const string Project1 = "MarkdownToPDF";
+        public const string Project2 = "Documenter";
         public static string inBaseRelPath = @"../../../";
         public static string outBaseFolder;
         public static void Main()
@@ -17,20 +20,22 @@ namespace Portable_Badger
             List<string> files = new List<string>();
             string version;
 
-            version = GetVersion(inBaseRelPath + "bin/" + ProjectName + ".exe");
-            outBaseFolder = ProjectName + "-" + version + @"/";
+            version = GetVersion(inBaseRelPath + "bin/" + Project1 + ".exe");
+            outBaseFolder = Project1 + "-" + version + @"/";
 
-            files.Add(inBaseRelPath + "bin/" + ProjectName + ".exe");
+            files.Add(inBaseRelPath + "bin/" + Project1 + ".exe");
+            files.Add(inBaseRelPath + "bin/" + Project2 + ".exe");
 
             List<string> dependencyList = new List<string>();
-            GetDependencies(inBaseRelPath + "bin/", ProjectName + ".exe", ref dependencyList);
+            GetDependencies(inBaseRelPath + "bin/", Project1 + ".exe", ref dependencyList);
+            GetDependencies(inBaseRelPath + "bin/", Project2 + ".exe", ref dependencyList);
             files.AddRange(dependencyList);
 
             //add font files in /fonts
             files.Add(inBaseRelPath + "fonts/regular.ttf");
             files.Add(inBaseRelPath + "fonts/code.ttf");
 
-            string outputFile = inBaseRelPath + ProjectName + "-" + version + ".zip";
+            string outputFile = inBaseRelPath + productName + "-" + version + ".zip";
 
             Console.WriteLine("Compressing files");
             Compress(outputFile, files);
