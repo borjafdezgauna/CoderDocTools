@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.28307.421
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{8927A44E-FE58-4BF2-9FB6-222C297C043C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DDC44A0A-6E1F-4757-8717-E2CB5230CCF8}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CI-config", "CI-config", "{DDC44A0A-6E1F-4757-8717-E2CB5230CCF8}"
 	ProjectSection(SolutionItems) = preProject
 		.travis.yml = .travis.yml
 	EndProjectSection
@@ -14,7 +14,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bundler", "Bundler\Bundler.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkdownToPDF", "MarkdownToPDF\MarkdownToPDF.csproj", "{5DDF975F-05D6-47D5-83C4-DFC15E601530}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parsing", "tests\XUnit\Parsing.csproj", "{9ABDFBAF-0DC3-4B65-B245-B6749F551CFA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarkdownToPDFTests", "tests\XUnit\MarkdownToPDFTests.csproj", "{9ABDFBAF-0DC3-4B65-B245-B6749F551CFA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Documenter", "Documenter\Documenter.csproj", "{B0E022B0-0A52-4BBE-B6FB-44B78003C510}"
 EndProject
