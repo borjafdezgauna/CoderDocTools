@@ -13,6 +13,8 @@ namespace Portable_Badger
 
         public const string Project1 = "MarkdownToPDF";
         public const string Project2 = "Documenter";
+        public const string Project3 = "AddLicense";
+
         public static string inBaseRelPath = @"../../../";
         public static string outBaseFolder;
         public static void Main()
@@ -25,10 +27,12 @@ namespace Portable_Badger
 
             files.Add(inBaseRelPath + "bin/" + Project1 + ".exe");
             files.Add(inBaseRelPath + "bin/" + Project2 + ".exe");
+            files.Add(inBaseRelPath + "bin/" + Project3 + ".exe");
 
             List<string> dependencyList = new List<string>();
             GetDependencies(inBaseRelPath + "bin/", Project1 + ".exe", ref dependencyList);
             GetDependencies(inBaseRelPath + "bin/", Project2 + ".exe", ref dependencyList);
+            GetDependencies(inBaseRelPath + "bin/", Project3 + ".exe", ref dependencyList);
             files.AddRange(dependencyList);
 
             //add font files in /fonts

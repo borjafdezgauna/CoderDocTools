@@ -1,4 +1,5 @@
 Master branch: ![Build status](https://travis-ci.com/borjafdezgauna/GitHubWikiToPDF.svg?branch=master)
+
 Develop branch: ![Build status](https://travis-ci.com/borjafdezgauna/GitHubWikiToPDF.svg?branch=develop)
 
 # About this project

@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("GitHubWikiToPDF")]
+[assembly: AssemblyTitle("PrependSources")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("GitHubWikiToPDF")]
+[assembly: AssemblyProduct("PrependSources")]
 [assembly: AssemblyCopyright("Copyright ©  2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("5ddf975f-05d6-47d5-83c4-dfc15e601530")]
+[assembly: Guid("ece2bcd0-ddaf-4cd4-92fa-39609590e8ba")]
 
 // Version information for an assembly consists of the following four values:
 //
