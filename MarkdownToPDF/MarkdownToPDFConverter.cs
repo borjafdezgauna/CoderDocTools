@@ -137,9 +137,13 @@ namespace MarkdownToPDF
                 line = line.Substring(5);
                 m_wikiPDFDocument.StartHeader(5);
             }
+            else if (line.StartsWith("---") || line.StartsWith("***")) //ignore lines
+            {
+                line = null;
+            }
             else if (line.StartsWith("```"))
             {
-                m_wikiPDFDocument.ToggleCodeBlock(2);
+                m_wikiPDFDocument.ToggleCodeBlock(numIndents);
                 line = null;
             }
             else if (line.StartsWith("> "))
@@ -313,7 +317,7 @@ namespace MarkdownToPDF
             {
                 int numIndents = 0;
                 numIndents = CountSpacesAtBeginning(line);
-                string trimmedLine= line.Trim(' ');
+                string trimmedLine= line.Trim(' ', '\t');
 
                 if (trimmedLine.Length > 0)
                 {

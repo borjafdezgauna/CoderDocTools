@@ -174,6 +174,9 @@ namespace MarkdownToPDF
 
         public void StartNote(int level)
         {
+            //Do nothing if within a code block
+            if (IsCodeBlockOpen()) return;
+
             CurrentParagraphType = ParagraphType.Note;
             m_document?.LastSection.AddParagraph("", Styler.StyleNote);
         }
