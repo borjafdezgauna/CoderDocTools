@@ -38,22 +38,22 @@ namespace DocumenterTests
             Dictionary<string, string> files = new Dictionary<string, string>
             {
                 ["Class1File.cs"] =
-                    "using System.IO;\nnamespace MyProject\n{\npublic class Class1\n{\n"
-                    + "/// <summary>\n/// Constructor of Class1</summary>"
+                    "using System.IO;\nnamespace MyProject\n{\npublic class Class1\n{\r\n"
+                    + "/// <summary>\n/// Constructor of Class1</summary>\n"
                     + "/// <param name=\"name\">The object's name</param>\n"
-                    + "public Class1(string name){m_name= name;}"
-                    + "/// <summary>\n/// Description of the method Foo()</summary>"
-                    + "/// <param name=\"input\">Input argument</param>"
+                    + "public Class1(string name){m_name= name;}\n"
+                    + "/// <summary>\n/// Description of the method Foo()</summary>\n"
+                    + "/// <param name=\"input\">Input argument</param>\n"
                     + "/// <returns>Return code</returns>\n"
                     + "public static void Foo(int input){return 1;}}\n}",
                 ["Class2File.cs"] =
-                    "using System.IO;\nnamespace MyProject\n{\npublic class Class2\n{\npublic Class2(){}\n"
+                    "using System.IO;\nnamespace MyProject\n{\npublic class Class2\n{\npublic Class2(){}\n\r"
                     + "/// <summary>\n/// Method Class2.Foo(int)\n/// </summary>\n"
-                    + "/// <param name=\"input\">Just a number</param>"
+                    + "/// <param name=\"input\">Just a number</param>\n"
                     + "/// <returns>Return code</returns>\n"
                     + "public int Foo(int input){return 2;}\n"
                     + "/// <summary>\n/// Method Class2.Foo2(int)\n/// </summary>\n"
-                    + "/// <param name=\"input2\">Just a number</param>"
+                    + "/// <param name=\"input2\">Just a number</param>\n"
                     + "public async static void Foo2(int input2){ // Do nothing, return nothing}\n"
                     + "}\n}"
             };

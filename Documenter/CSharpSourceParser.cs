@@ -14,8 +14,8 @@ namespace Documenter
         {
             //We only process comments starting with ///
             //and public methods
-            string methodRegEx = @"(\s*///[^\r\n]+\r*\n*)+\s*(?:public\s+|protected\s+|async\s+|static\s+)+?(\w+)\s+(\w+)\(([^\)]*)\)";
-            string constructorRegEx = @"(\s*///[^\r\n]+\r*\n*)+\s*(?:public|protected)\s+" + className + @"\s*\(([^\)]*)\)";
+            string methodRegEx = @"(\s*///[^\r\n]+[\r\n]+)+\s*(?:public\s+|protected\s+|async\s+|static\s+)+?(\w+)\s+(\w+)\(([^\)]*)\)";
+            string constructorRegEx = @"(\s*///[^\r\n]+[\r\n]+)+\s*(?:public|protected)\s+" + className + @"\s*\(([^\)]*)\)";
             string methodName, returnType, arguments;
             CaptureCollection comments = null;
             //parse regular methods

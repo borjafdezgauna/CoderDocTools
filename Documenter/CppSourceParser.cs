@@ -40,8 +40,8 @@ namespace Documenter
         void ParseAllMethodsAndComments(string filename, string content)
         {
             //We only process comments starting with ///
-            string methodRegEx = @"(///[^\r\n]+\r*\n*)+(\w+)\s+(\w+)::(\w+)\(([^\)]*)\)";
-            string constructorRegEx = @"(///[^\r\n]+\r*\n*)+(\w+)::\2\s*\(([^\)]*)\)";
+            string methodRegEx = @"(///[^\r\n]+[\r\n]+)+(\w+)\s+(\w+)::(\w+)\(([^\)]*)\)";
+            string constructorRegEx = @"(///[^\r\n]+[\r\n]+)+(\w+)::\2\s*\(([^\)]*)\)";
             string className, methodName, returnType, arguments;
             CaptureCollection comments;
             //regular methods
