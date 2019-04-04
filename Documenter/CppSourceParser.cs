@@ -6,9 +6,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace SimionSrcParser
+namespace Documenter
 {
-    class CppSourceParser: SimionSrcParser
+    public class CppSourceParser: SourceParser
     {
         //PRIVATE stuff///////////////////////////////////////////////////
         string m_currentFile = "";
@@ -40,10 +40,12 @@ namespace SimionSrcParser
         void ParseAllMethodsAndComments(string filename, string content)
         {
             //We only process comments starting with ///
-            string sPattern = @"(///[^\r\n]+\r\n)+(\w+)\s+(\w+)::(\w+)\(([^\)]*)\)";
+            string methodRegEx = @"(///[^\r\n]+\r*\n*)+(\w+)\s+(\w+)::(\w+)\(([^\)]*)\)";
+            string constructorRegEx = @"(///[^\r\n]+\r*\n*)+(\w+)::\2\s*\(([^\)]*)\)";
             string className, methodName, returnType, arguments;
             CaptureCollection comments;
-            foreach (Match match in Regex.Matches(content, sPattern))
+            //regular methods
+            foreach (Match match in Regex.Matches(content, methodRegEx))
             {
                 comments = match.Groups[1].Captures;
                 returnType = match.Groups[2].Value;
@@ -58,6 +60,22 @@ namespace SimionSrcParser
                     ParsedObjectClasses.Add(objClass);
                 }
                 objClass.AddMethod(new ClassMethod(methodName, comments, arguments, returnType, ClassMethod.MethodType.Regular));
+            }
+            //constructors
+            foreach (Match match in Regex.Matches(content, constructorRegEx))
+            {
+                comments = match.Groups[1].Captures;
+                className = match.Groups[2].Value;
+                methodName = match.Groups[2].Value;
+                arguments = match.Groups[3].Value;
+
+                ObjectClass objClass = ParsedObjectClasses.Find(c => c.Name == className);
+                if (objClass == null)
+                {
+                    objClass = new ObjectClass(filename, className);
+                    ParsedObjectClasses.Add(objClass);
+                }
+                objClass.AddMethod(new ClassMethod(methodName, comments, arguments, null, ClassMethod.MethodType.Constructor));
             }
         }
         //PUBLIC methods//////////////////////////////////////////////////
@@ -79,18 +97,12 @@ namespace SimionSrcParser
         public override void ParseSourceFilesInDir(string inputDir)
         {
             //Parse .cpp files for constructor and factory definition
-            List<string> sourceFiles = new List<string>(Directory.EnumerateFiles(inputDir, "*.cpp"
-                , SearchOption.AllDirectories));
+            List<string> sourceFiles = new List<string>(Directory.EnumerateFiles(inputDir, "*.cpp", SearchOption.AllDirectories));
             foreach (var file in sourceFiles)
             {
                 Console.WriteLine("Parsing source file: " + file);
                 ParseSrcFile(file);
             }
-        }
-
-        public override int PostProcess()
-        {
-            return 0;
         }
 
         public override List<ObjectClass> GetObjectClasses()

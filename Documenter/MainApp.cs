@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 
-namespace SimionSrcParser
+namespace Documenter
 {
-    class MainApp
+    public class MainApp
     {
         const string argSourcePrefix = "lang=";
         const string argSourceDirPrefix = "input-dir=";
@@ -18,7 +18,7 @@ namespace SimionSrcParser
 
         static bool ParseArguments(string [] args)
         {
-            //lang=[cpp|csharp] source-dir=<dir> [out-docs=<path-to-md>]
+            //lang=[cpp|csharp] source-dir=<dir> output-dir=<dir>
             foreach (string arg in args)
             {
                 if (arg.StartsWith(argSourcePrefix)) sourcesLanguage = arg.Substring(argSourcePrefix.Length).Trim('"');
@@ -30,7 +30,13 @@ namespace SimionSrcParser
 
             return true;        //all required arguments were provided
         }
-        static int Main(string[] args)
+
+        /// <summary>
+        /// Main entry point of the application
+        /// </summary>
+        /// <param name="args">Arguments passed to the executable</param>
+        /// <returns>Return code</returns>
+        public static int Main(string[] args)
         {
             //not to read 23.232 as 23232
             Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
@@ -42,7 +48,7 @@ namespace SimionSrcParser
             }
 
             //Create the appropriate parser
-            SimionSrcParser parser = null;
+            SourceParser parser = null;
             if (sourcesLanguage == "csharp")
                 parser = new CSharpSourceParser();
             else parser = new CppSourceParser();
@@ -54,25 +60,21 @@ namespace SimionSrcParser
                 else Console.WriteLine("ERROR. Directory doesn't exist: " + sourceDir);
             }
 
-            int numErrors = parser.PostProcess();
+            string inputSourceDirectories = "{ ";
+            foreach (string sourceDir in sourceDirectories) inputSourceDirectories += sourceDir + "; ";
+            inputSourceDirectories += "}";
 
-            if (numErrors==0)
+            if (outputDocsFolder != null && parser.GetObjectClasses() != null)
             {
-                string inputSourceDirectories = "{ ";
-                foreach (string sourceDir in sourceDirectories) inputSourceDirectories += sourceDir + "; ";
-                inputSourceDirectories += "}";
-
-                if (outputDocsFolder != null && parser.GetObjectClasses() != null)
-                {
-                    //Save documentation as markdown
-                    MarkdownExporter markdownExporter = new MarkdownExporter();
-                    Console.WriteLine("Saving source code documentation as Markdown: " + inputSourceDirectories + " ->"
-                        + outputDocsFolder + "Home" + markdownExporter.FormatExtension());
-                    DocumentationExporter.ExportDocumentation(outputDocsFolder, markdownExporter, parser.GetObjectClasses());
-                }
-
-                Console.WriteLine("Finished: {0} Kbs of code read.", parser.GetNumBytesProcessed() / 1000);
+                //Save documentation as markdown
+                MarkdownExporter markdownExporter = new MarkdownExporter();
+                Console.WriteLine("Saving source code documentation as Markdown: " + inputSourceDirectories + " ->"
+                    + outputDocsFolder + "Home" + markdownExporter.FormatExtension());
+                DocumentationExporter.ExportDocumentation(outputDocsFolder, markdownExporter, parser.GetObjectClasses());
             }
+
+            Console.WriteLine("Finished: {0} Kbs of code read.", parser.GetNumBytesProcessed() / 1000);
+
             return 0;
         }
     }

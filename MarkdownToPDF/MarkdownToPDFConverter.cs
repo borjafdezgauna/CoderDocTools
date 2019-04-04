@@ -187,7 +187,7 @@ namespace MarkdownToPDF
         const string PatternInlineCode = @"`[^`]+`"; // ` text `
         const string PatternAllInlines = "(" + PatterInlineLinkedImage + "|" + PatternInlineImage + "|" + PatternInlineBold1 + "|" + PatternInlineBold2 + "|" + PatternInlineCode 
             + "|" + PatternInlineItalic + "|" + PatternInlineLink1 + "|" + PatternInlineLink2 + "|" + PatternInlineLink3 + ")";
-        string [] LinkPatterns = { CapturePatternInlineLinkedImage, CapturePatternInlineLink1, CapturePatternInlineLink2, CapturePatternInlineLink3 };
+        readonly string [] LinkPatterns = { CapturePatternInlineLinkedImage, CapturePatternInlineLink1, CapturePatternInlineLink2, CapturePatternInlineLink3 };
 
         public List<string> SplitByInlinePatterns(string text)
         {

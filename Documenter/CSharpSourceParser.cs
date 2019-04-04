@@ -6,32 +6,51 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace SimionSrcParser
+namespace Documenter
 {
-    class CSharpSourceParser: SimionSrcParser
+    public class CSharpSourceParser: SourceParser
     {
         void ParseClass(string filename, string namespaceName, string className, string classDefinition)
         {
             //We only process comments starting with ///
             //and public methods
-            string sPattern = @"(\s*///[^\r\n]+\r*\n*)+\s*(?:public|protected)?\s+(?:async\s+)?(?:static\s+)?(\w+)\s+(\w+)\(([^\)]*)\)";
+            string methodRegEx = @"(\s*///[^\r\n]+\r*\n*)+\s*(?:public\s+|protected\s+|async\s+|static\s+)+?(\w+)\s+(\w+)\(([^\)]*)\)";
+            string constructorRegEx = @"(\s*///[^\r\n]+\r*\n*)+\s*(?:public|protected)\s+" + className + @"\s*\(([^\)]*)\)";
             string methodName, returnType, arguments;
-            CaptureCollection comments;
-            foreach (Match match in Regex.Matches(classDefinition, sPattern))
+            CaptureCollection comments = null;
+            //parse regular methods
+            foreach (Match match in Regex.Matches(classDefinition, methodRegEx))
             {
                 comments = match.Groups[1].Captures;
                 returnType = match.Groups[2].Value;
                 methodName = match.Groups[3].Value;
                 arguments = match.Groups[4].Value;
 
-                string fullClassName = namespaceName + "." + className;
-                ObjectClass objClass = ParsedObjectClasses.Find(c => c.Name == fullClassName);
+                ObjectClass objClass = ParsedObjectClasses.Find(c => c.Name == className);
                 if (objClass == null)
                 {
-                    objClass = new ObjectClass(filename, fullClassName);
+                    objClass = new ObjectClass(filename, className, namespaceName);
                     ParsedObjectClasses.Add(objClass);
                 }
                 objClass.AddMethod(new ClassMethod(methodName, comments, arguments, returnType, ClassMethod.MethodType.Regular));
+            }
+            methodName = null;
+            comments = null;
+            arguments = null;
+            //parse constructors
+            foreach (Match match in Regex.Matches(classDefinition, constructorRegEx))
+            {
+                comments = match.Groups[1].Captures;
+                methodName = className;
+                arguments = match.Groups[2].Value;
+
+                ObjectClass objClass = ParsedObjectClasses.Find(c => c.Name == className);
+                if (objClass == null)
+                {
+                    objClass = new ObjectClass(filename, className, namespaceName);
+                    ParsedObjectClasses.Add(objClass);
+                }
+                objClass.AddMethod(new ClassMethod(methodName, comments, arguments, null, ClassMethod.MethodType.Constructor));
             }
         }
         void ParseNamespace(string filename, string namespaceName, string namespaceContent)
@@ -85,10 +104,6 @@ namespace SimionSrcParser
             }
         }
 
-        public override int PostProcess()
-        {
-            return 0;
-        }
         List<ObjectClass> ParsedObjectClasses= new List<ObjectClass>();
         public override List<ObjectClass> GetObjectClasses()
         {

@@ -30,14 +30,13 @@ using System.Text;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace SimionSrcParser
+namespace Documenter
 {
 
-    public abstract class SimionSrcParser
+    public abstract class SourceParser
     {
         public abstract void ParseSourceFilesInDir(string inputDir);
 
-        public abstract int PostProcess();
         public abstract int GetNumBytesProcessed();
 
         public abstract List<ObjectClass> GetObjectClasses();

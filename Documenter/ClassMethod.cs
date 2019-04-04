@@ -2,7 +2,7 @@
 using System.Text.RegularExpressions;
 using System.Xml;
 
-namespace SimionSrcParser
+namespace Documenter
 {
     public class ClassMethod
     {
@@ -13,7 +13,7 @@ namespace SimionSrcParser
         public string ReturnType { get; } = null;
         public string Arguments { get; } = null;
 
-        public string ReturnValueDescription;
+        public string ReturnValueDescription { get; set; } = null;
         public Dictionary<string, string> ArgumentDescriptions = new Dictionary<string, string>();
         public string MethodSummary { get; set; } = null;
 
@@ -47,7 +47,7 @@ namespace SimionSrcParser
             //Add return description if there is one
             XmlNode returnDescription = doc.SelectSingleNode("doc/returns");
             if (returnDescription != null)
-                ReturnValueDescription = summary.InnerText.Trim(trimmedChars);
+                ReturnValueDescription = returnDescription.InnerText.Trim(trimmedChars);
         }
 
         public ClassMethod(string name, CaptureCollection comments, string arguments, string returnType, MethodType type = MethodType.Regular)
