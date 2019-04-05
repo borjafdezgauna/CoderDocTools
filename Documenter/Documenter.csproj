@@ -53,6 +53,7 @@
     <Compile Include="ObjectClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CodeParser.cs" />
+    <Compile Include="TextUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

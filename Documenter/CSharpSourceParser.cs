@@ -10,6 +10,7 @@ namespace Documenter
 {
     public class CSharpSourceParser: SourceParser
     {
+
         void ParseClass(string filename, string namespaceName, string className, string classDefinition)
         {
             //We only process comments starting with ///
@@ -23,8 +24,8 @@ namespace Documenter
             {
                 comments = match.Groups[1].Captures;
                 returnType = match.Groups[2].Value;
-                methodName = match.Groups[3].Value;
-                arguments = match.Groups[4].Value;
+                methodName = TextUtils.RemoveLinebreaksAndTrim(match.Groups[3].Value);
+                arguments = TextUtils.RemoveLinebreaksAndTrim(match.Groups[4].Value);
 
                 ObjectClass objClass = ParsedObjectClasses.Find(c => c.Name == className);
                 if (objClass == null)
@@ -42,7 +43,7 @@ namespace Documenter
             {
                 comments = match.Groups[1].Captures;
                 methodName = className;
-                arguments = match.Groups[2].Value;
+                arguments = TextUtils.RemoveLinebreaksAndTrim(match.Groups[2].Value);
 
                 ObjectClass objClass = ParsedObjectClasses.Find(c => c.Name == className);
                 if (objClass == null)

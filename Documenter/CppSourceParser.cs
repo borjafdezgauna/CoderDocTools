@@ -48,10 +48,10 @@ namespace Documenter
             foreach (Match match in Regex.Matches(content, methodRegEx))
             {
                 comments = match.Groups[1].Captures;
-                returnType = match.Groups[2].Value;
-                className = match.Groups[3].Value;
-                methodName = match.Groups[4].Value;
-                arguments = match.Groups[5].Value;
+                returnType = TextUtils.RemoveLinebreaksAndTrim(match.Groups[2].Value);
+                className = TextUtils.RemoveLinebreaksAndTrim(match.Groups[3].Value);
+                methodName = TextUtils.RemoveLinebreaksAndTrim(match.Groups[4].Value);
+                arguments = TextUtils.RemoveLinebreaksAndTrim(match.Groups[5].Value);
 
                 ObjectClass objClass = ParsedObjectClasses.Find(c => c.Name == className);
                 if (objClass == null)
@@ -65,9 +65,9 @@ namespace Documenter
             foreach (Match match in Regex.Matches(content, constructorRegEx))
             {
                 comments = match.Groups[1].Captures;
-                className = match.Groups[2].Value;
-                methodName = match.Groups[2].Value;
-                arguments = match.Groups[3].Value;
+                className = TextUtils.RemoveLinebreaksAndTrim(match.Groups[2].Value);
+                methodName = TextUtils.RemoveLinebreaksAndTrim(match.Groups[2].Value);
+                arguments = TextUtils.RemoveLinebreaksAndTrim(match.Groups[3].Value);
 
                 ObjectClass objClass = ParsedObjectClasses.Find(c => c.Name == className);
                 if (objClass == null)
