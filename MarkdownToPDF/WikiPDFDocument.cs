@@ -114,8 +114,8 @@ namespace MarkdownToPDF
             if (level == 1) StartSection();
 
             Paragraph headingParagraph = m_document?.LastSection.AddParagraph("", "Heading" + level);
-            if (level < 4 && refName != null)
-                headingParagraph.AddBookmark(refName);
+            if (level < 3 && refName != null)
+                headingParagraph.AddBookmark(Utils.WikifyLink(refName));
         }
 
         public void StartParagraph(int numIndents)
@@ -280,13 +280,11 @@ namespace MarkdownToPDF
                 //reference to a document converted to section
                 hyperlink = m_document.LastSection.LastParagraph.AddHyperlink(link);
                 hyperlink.AddText(text);
-                //hyperlink.AddPageRefField(link);
             }
             else if (link.StartsWith("http"))
             {
                 hyperlink = m_document.LastSection.LastParagraph.AddHyperlink(link, HyperlinkType.Url);
                 hyperlink.AddText(text);
-                //hyperlink.AddPageRefField(link);
             }
             else
             {

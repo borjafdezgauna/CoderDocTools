@@ -11,8 +11,7 @@ namespace Documenter
     {
         static void ExportMethod(StreamWriter writer, ClassMethod method, FileFormatter exporter)
         {
-            exporter.Title3(writer, exporter.InlineCode(method.ReturnType + " "
-                + method.Name + "(" + method.Arguments + ")"));
+            exporter.Title3(writer, method.ReturnType + " " + method.Name + "(" + method.Arguments + ")");
 
             exporter.OpenList(writer);
             if (method.MethodSummary != null)
@@ -57,7 +56,6 @@ namespace Documenter
             using (StreamWriter indexWriter = File.CreateText(outputIndexFile))
             {
                 exporter.OpeningSection(indexWriter);
-                exporter.Comment(indexWriter, "This file has been automatically generated. Please do not edit it");
                 exporter.Title2(indexWriter, "API Reference");
                 exporter.OpenList(indexWriter);
                 foreach (ObjectClass objClass in classes)
@@ -68,24 +66,24 @@ namespace Documenter
                     using (StreamWriter classWriter = File.CreateText(outputMdFile))
                     {
                         exporter.OpeningSection(classWriter);
-                        exporter.Title1(classWriter, "Class " + objClass.Name);
+                        //exporter.Title1(classWriter, "Class " + objClass.Name);
                         exporter.Comment(classWriter, "Source: " + objClass.SrcFileName);
 
                         if (objClass.Constructors.Count > 0)
                         {
-                            exporter.Title2(classWriter, "Constructors");
+                            exporter.Title1(classWriter, "Constructors");
                             foreach (ClassMethod method in objClass.Constructors)
                                 ExportMethod(classWriter, method, exporter);
                         }
                         if (objClass.Destructors.Count > 0)
                         {
-                            exporter.Title2(classWriter, "Destructors");
+                            exporter.Title1(classWriter, "Destructors");
                             foreach (ClassMethod method in objClass.Destructors)
                                 ExportMethod(classWriter, method, exporter);
                         }
                         if (objClass.Methods.Count > 0)
                         {
-                            exporter.Title2(classWriter, "Methods");
+                            exporter.Title1(classWriter, "Methods");
                             foreach (ClassMethod method in objClass.Methods)
                                 ExportMethod(classWriter, method, exporter);
                         }

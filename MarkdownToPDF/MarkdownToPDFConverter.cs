@@ -36,10 +36,6 @@ namespace MarkdownToPDF
             return "img/" + Path.GetFileName(url);
         }
 
-        string WikifyLink(string url)
-        {
-            return url.ToLower().Replace(' ', '-');
-        }
         string LinkToAnchorName(string url)
         {
             int lastSlash = Math.Max(url.LastIndexOf('/'), url.LastIndexOf('\\'));
@@ -58,6 +54,7 @@ namespace MarkdownToPDF
             }
             return localFile;
         }
+
         bool ParseImage(string line, bool inline = true)
         {
             Match match = Regex.Match(line, CapturePatternImage); //![]()
@@ -91,7 +88,7 @@ namespace MarkdownToPDF
                         else wikiLink = text;
 
                         if (!wikiLink.StartsWith("http"))
-                            m_wikiPDFDocument?.AddLinkToLastParagraph(text, WikifyLink(wikiLink));
+                            m_wikiPDFDocument?.AddLinkToLastParagraph(text, Utils.WikifyLink(wikiLink));
                         else
                             m_wikiPDFDocument?.AddLinkToLastParagraph(text, wikiLink);
                     }
@@ -107,7 +104,7 @@ namespace MarkdownToPDF
                     //Add linked documents to pending list
                     if (!wikiLink.StartsWith("http"))
                     {
-                        wikiLink = WikifyLink(wikiLink);
+                        wikiLink = Utils.WikifyLink(wikiLink);
                         //Add to the list of linked pages
                         LinkedPages.Add(wikiLink + ".md");
                     }
@@ -120,12 +117,12 @@ namespace MarkdownToPDF
             if (line.StartsWith("# "))
             {
                 line = line.Substring(2);
-                m_wikiPDFDocument.StartHeader(2, WikifyLink(line)); // <- the title will be used as the name of the reference to be used in links to the page that originated this heading
+                m_wikiPDFDocument.StartHeader(2, line);
             }
             else if (line.StartsWith("## "))
             {
                 line = line.Substring(3);
-                m_wikiPDFDocument.StartHeader(3, WikifyLink(line)); // <- the title will be used as the name of the reference to be used in links to the page that originated this heading
+                m_wikiPDFDocument.StartHeader(3, line);
             }
             else if (line.StartsWith("### "))
             {
@@ -265,6 +262,11 @@ namespace MarkdownToPDF
         {
             string docName = Path.GetFileNameWithoutExtension(htmlDocFilename);
             docName = docName.Replace('-', ' ');
+
+            if (!docName.Contains(' '))
+                //No spaces means it is probably the name of a function output by Documenter OR a single word. In any case, no more processing needed
+                return docName;
+
             var result = Regex.Replace(docName, @"\b(\w)", m => m.Value.ToUpper());
             docName = Regex.Replace(result, @"(\s(of|in|by|and|the)|\'[st])\b", m => m.Value.ToLower(), RegexOptions.IgnoreCase);
 
@@ -333,8 +335,6 @@ namespace MarkdownToPDF
                     }
                 }
             }
-
-            //parsedLines.Add(CloseAllOpenLists()); //In case there is some un-closed list
 
             ConvertedPages.Add(markdownDocFilename);
             while (LinkedPages.Count > 0)

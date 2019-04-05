@@ -153,9 +153,13 @@ namespace MarkdownToPDF
             style.Font.Name = FontManager.RegularFont;
 
             //Note
-            style = document.Styles.AddStyle(StyleNote, StyleCode);
-            style.Font.Name = FontManager.CodeFont;
-            style.Font.Color = InlineCodeColor;
+            Color noteColor = new Color(80, 80, 80);
+            style = document.Styles.AddStyle(StyleNote, StyleNormal);
+            style.Font.Name = FontManager.RegularFont;
+            style.Font.Italic = true;
+            style.Font.Color = noteColor;
+            style.ParagraphFormat.LeftIndent = Unit.FromCentimeter(0.5);
+            style.ParagraphFormat.RightIndent = Unit.FromCentimeter(0.5);
 
             //Image
             style = document.Styles.AddStyle(StyleImage, StyleNormal);

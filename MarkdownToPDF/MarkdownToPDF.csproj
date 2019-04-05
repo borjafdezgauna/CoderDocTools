@@ -66,6 +66,7 @@
     <Compile Include="GitHubWikiDownloader.cs" />
     <Compile Include="MarkdownToPDFConverter.cs" />
     <Compile Include="Styler.cs" />
+    <Compile Include="Utils.cs" />
     <Compile Include="WikiPDFDocument.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
