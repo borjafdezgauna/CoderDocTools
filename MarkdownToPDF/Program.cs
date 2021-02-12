@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using PdfSharp;
@@ -47,7 +48,8 @@ namespace MarkdownToPDF
                 projectDescription = "Generated with CodeDocTools (https://github.com/borjafdezgauna/CoderDocTools)"; //
                 tempFolder = projectName;
                 markDownInputFolder = tempFolder;
-                inputFile = "Home.md";
+                if (inputFile == null)
+                    inputFile = "Home.md";
                 executionMode = ExecutionMode.GitHubWikiToPDF;
                 return true; //GitHub wiki -> PDF mode
             }
@@ -67,6 +69,10 @@ namespace MarkdownToPDF
         }
         static void Main(string[] args)
         {
+            //Common network settings
+            ServicePointManager.Expect100Continue = true;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
             if (!ParseArguments(args))
             {
                 Console.WriteLine("ERROR. Incorrect arguments. Do not use spaces in any of the arguments");
