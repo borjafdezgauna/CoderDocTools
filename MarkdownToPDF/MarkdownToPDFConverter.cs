@@ -64,7 +64,17 @@ namespace MarkdownToPDF
             if (match.Success)
             {
                 string imageUrl = match.Groups[2].Value;
-                string localFile = DownloadImage(imageUrl);
+                string localFile = null;
+                if (!imageUrl.StartsWith("http"))
+                {
+                    //It's a relative link to an image in the repository. Just need to prepend the input folder
+                    localFile = InputFolder + "/" + imageUrl;
+                }
+                else
+                {
+                    //It's a URL, need to download the image
+                    localFile = DownloadImage(imageUrl);
+                }
 
                 if (inline) m_wikiPDFDocument.AddInlineImageToLastParagraph(localFile);
                 else m_wikiPDFDocument.AddImage(localFile);
@@ -279,8 +289,11 @@ namespace MarkdownToPDF
             return i;
         }
 
+        private string InputFolder;
         public void Convert(string inputMarkdownFolder, string markdownDocFilename, string outputHtmlFolder)
         {
+            InputFolder = inputMarkdownFolder;
+
             //we ignore external references
             List<string> ignoredPrefixes = new List<string>(){ "http" };
             foreach (string ignoredPrefix in ignoredPrefixes)
